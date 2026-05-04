@@ -9,7 +9,7 @@ Para mantener la integridad del proyecto, seguimos este flujo de colaboración:
 3.  **CI/CD:** GitHub verificará que el código compile correctamente. Si la prueba es exitosa (check verde), se realiza el merge y **Render** actualizará la página web automáticamente.
 
 
-##Configuración Local
+## Configuración Local
 
 Si deseas ejecutar el proyecto en tu máquina (ej. Linux Mint):
 
