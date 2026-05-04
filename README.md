@@ -1,4 +1,4 @@
----
+
 
 ## Flujo de Trabajo para el Equipo
 
@@ -8,7 +8,6 @@ Para mantener la integridad del proyecto, seguimos este flujo de colaboración:
 2.  **Pull Requests:** Al terminar una tarea, se solicita un Pull Request hacia la rama **`dev`**.
 3.  **CI/CD:** GitHub verificará que el código compile correctamente. Si la prueba es exitosa (check verde), se realiza el merge y **Render** actualizará la página web automáticamente.
 
----
 
 ##Configuración Local
 
