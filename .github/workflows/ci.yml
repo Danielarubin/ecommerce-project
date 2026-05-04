@@ -1,11 +1,11 @@
 name: Java CI with Maven
 
-# El trigger: se activa al hacer push o PR a las ramas de desarrollo y principal
+
 on:
   push:
-    branches: [ "main", "dev" ]
+    branches: [ "main", "dev", "dev-ale" ]
   pull_request:
-    branches: [ "main", "dev" ]
+    branches: [ "main", "dev", "dev-ale" ]
 
 jobs:
   build:
