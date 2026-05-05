@@ -1,9 +1,0 @@
-/home/daniela/Documentos/ProyectoBazar/ecommerce-project/src/main/java/com/school/ecommerce/EcommerceApplication.java
-/home/daniela/Documentos/ProyectoBazar/ecommerce-project/src/main/java/com/school/ecommerce/dto/CartItemDto.java
-/home/daniela/Documentos/ProyectoBazar/ecommerce-project/src/main/java/com/school/ecommerce/controller/ApiController.java
-/home/daniela/Documentos/ProyectoBazar/ecommerce-project/src/main/java/com/school/ecommerce/controller/HomeController.java
-/home/daniela/Documentos/ProyectoBazar/ecommerce-project/src/main/java/com/school/ecommerce/service/MockDataService.java
-/home/daniela/Documentos/ProyectoBazar/ecommerce-project/src/main/java/com/school/ecommerce/controller/CheckoutController.java
-/home/daniela/Documentos/ProyectoBazar/ecommerce-project/src/main/java/com/school/ecommerce/model/Product.java
-/home/daniela/Documentos/ProyectoBazar/ecommerce-project/src/main/java/com/school/ecommerce/model/Creator.java
-/home/daniela/Documentos/ProyectoBazar/ecommerce-project/src/main/java/com/school/ecommerce/controller/LoginController.java
