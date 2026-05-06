@@ -377,8 +377,8 @@
                         th:style="${creador.avatarGradient != null and !creador.avatarGradient.isEmpty() ? 'background:' + creador.avatarGradient : ''}"
                         th:text="${creador.avatarInitial}">D</div>
                     <div class="creator-meta">
-                        <h3 th:text="${creador.name}">Daniela's Archive</h3>
-                        <span th:text="${creador.location + ' • ' + creador.numberOfItems + ' piezas'}">
+                        <h3 th:text="${creador.username}">Daniela's Archive</h3>
+                        <span th:text="${creador.location + ' • ' + creador.products.size() + ' piezas'}">
                             Ciudad de México • 42 piezas
                         </span>
                     </div>
