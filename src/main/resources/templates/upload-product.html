@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subir Pieza - Bazar</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <style>
+        .upload-wrapper {
+            min-height: calc(100vh - 70px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            background: var(--bg-secondary);
+        }
+        .upload-card {
+            background: white;
+            padding: 4rem;
+            border-radius: 4px;
+            max-width: 600px;
+            width: 100%;
+            border: 1px solid var(--border-color);
+        }
+        .upload-title {
+            font-family: var(--font-serif);
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            line-height: 1.1;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            background: var(--bg-primary);
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            border-radius: 4px;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--text-dark);
+        }
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .btn-submit {
+            margin-top: 1rem;
+            width: 100%;
+            justify-content: center;
+        }
+        .file-upload-box {
+            border: 2px dashed var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .file-upload-box:hover {
+            border-color: var(--text-dark);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- MINIMAL NAVBAR -->
+    <nav class="nav">
+        <a class="nav-logo" th:href="@{/}">Baz<span>ar</span>cito</a>
+        <div class="nav-right">
+            <a th:href="@{/vender}" class="nav-action">Cancelar</a>
+        </div>
+    </nav>
+
+    <div class="upload-wrapper">
+        <div class="upload-card">
+            <h1 class="upload-title">Sube una <em>Pieza</em></h1>
+            
+            <form th:action="@{/vender/subir-producto}" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label class="form-label" for="name">Título de la Pieza</label>
+                    <input type="text" id="name" name="name" class="form-control" required placeholder="Ej. Blazer Oversize Lino">
+                </div>
+                <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <label class="form-label" for="price">Precio (MXN)</label>
+                        <input type="number" id="price" name="price" class="form-control" required placeholder="Ej. 1200">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="description">Descripción</label>
+                    <textarea id="description" name="description" class="form-control" required placeholder="Describe los detalles, tela, condición y la historia de esta pieza..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Fotografía</label>
+                    <div class="file-upload-box" onclick="document.getElementById('image').click()">
+                        <span style="font-size: 2rem; margin-bottom: 0.5rem; display: block;">📸</span>
+                        Haz clic para subir una imagen de la pieza (JPG, PNG)
+                        <input type="file" id="image" name="image" style="display: none;" accept="image/*" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-primary btn-submit">Publicar Pieza</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

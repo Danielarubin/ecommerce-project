@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Creator {
     private String name;
+    private String owner;
     private String location;
     private int numberOfItems;
     private List<String> tags;
@@ -15,9 +16,10 @@ public class Creator {
 
     public Creator() {}
 
-    public Creator(String name, String location, int numberOfItems, List<String> tags, 
+    public Creator(String name, String owner, String location, int numberOfItems, List<String> tags, 
                    String avatarInitial, String avatarGradient, String mainBg, String sub1Bg, String sub2Bg) {
         this.name = name;
+        this.owner = owner;
         this.location = location;
         this.numberOfItems = numberOfItems;
         this.tags = tags;
@@ -34,6 +36,14 @@ public class Creator {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public String getLocation() {
@@ -98,5 +108,10 @@ public class Creator {
 
     public void setSub2Bg(String sub2Bg) {
         this.sub2Bg = sub2Bg;
+    }
+
+    public String getHandle() {
+        if (name == null) return "tienda";
+        return name.toLowerCase().replaceAll("[^a-z0-9]", "-").replaceAll("-+", "-");
     }
 }
