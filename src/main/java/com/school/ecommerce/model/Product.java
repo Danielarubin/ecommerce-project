@@ -7,19 +7,26 @@ import java.math.BigDecimal;
 @Table(name = "products")
 public class Product {
 <<<<<<< HEAD
+<<<<<<< HEAD
     private String id;
 =======
+=======
+>>>>>>> 71b1f6b251ed4772c6fe4b0f784e6090740a6b5f
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, length = 150)
+<<<<<<< HEAD
+>>>>>>> 71b1f6b251ed4772c6fe4b0f784e6090740a6b5f
+=======
 >>>>>>> 71b1f6b251ed4772c6fe4b0f784e6090740a6b5f
     private String name;
 
     @Column(nullable = false, length = 100)
     private String brand;
+<<<<<<< HEAD
 <<<<<<< HEAD
     private String price;
     private String description;
@@ -107,6 +114,24 @@ public class Product {
 
     public Product() {}
 
+=======
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal price;
+
+    @Column(nullable = false)
+    private Integer stock = 0;
+
+    @Column(length = 255)
+    private String image;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id", nullable = false)
+    private User seller;
+
+    public Product() {}
+
+>>>>>>> 71b1f6b251ed4772c6fe4b0f784e6090740a6b5f
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -122,5 +147,8 @@ public class Product {
     public void setImage(String image) { this.image = image; }
     public User getSeller() { return seller; }
     public void setSeller(User seller) { this.seller = seller; }
+<<<<<<< HEAD
+>>>>>>> 71b1f6b251ed4772c6fe4b0f784e6090740a6b5f
+=======
 >>>>>>> 71b1f6b251ed4772c6fe4b0f784e6090740a6b5f
 }
