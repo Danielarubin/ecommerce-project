@@ -30,7 +30,7 @@ public class HomeController {
     @SuppressWarnings("unchecked")
     @GetMapping("/favoritos")
     public String favoritos(HttpSession session, Model model) {
-        List<String> favIds = (List<String>) session.getAttribute("favorites");
+        List<Long> favIds = (List<Long>) session.getAttribute("favorites");
         if (favIds == null) {
             favIds = new ArrayList<>();
         }

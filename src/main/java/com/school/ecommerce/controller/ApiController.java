@@ -23,8 +23,8 @@ public class ApiController {
     }
 
     @SuppressWarnings("unchecked")
-    private List<String> getFavorites(HttpSession session) {
-        List<String> favs = (List<String>) session.getAttribute("favorites");
+    private List<Long> getFavorites(HttpSession session) {
+        List<Long> favs = (List<Long>) session.getAttribute("favorites");
         if (favs == null) {
             favs = new ArrayList<>();
             session.setAttribute("favorites", favs);
@@ -71,13 +71,13 @@ public class ApiController {
     }
 
     @GetMapping("/favorites")
-    public ResponseEntity<List<String>> getFavoriteItems(HttpSession session) {
+    public ResponseEntity<List<Long>> getFavoriteItems(HttpSession session) {
         return ResponseEntity.ok(getFavorites(session));
     }
 
     @PostMapping("/favorites/toggle")
-    public ResponseEntity<List<String>> toggleFavorite(@RequestParam String id, HttpSession session) {
-        List<String> favs = getFavorites(session);
+    public ResponseEntity<List<Long>> toggleFavorite(@RequestParam Long id, HttpSession session) {
+        List<Long> favs = getFavorites(session);
         if (favs.contains(id)) {
             favs.remove(id);
         } else {
