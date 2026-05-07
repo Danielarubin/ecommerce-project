@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import com.school.ecommerce.service.CloudinaryService;
 
 @Controller
 @RequestMapping("/dashboard")
@@ -19,10 +22,12 @@ public class DashboardController {
 
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final CloudinaryService cloudinaryService;
 
-    public DashboardController(UserRepository userRepository, ProductRepository productRepository) {
+    public DashboardController(UserRepository userRepository, ProductRepository productRepository, CloudinaryService cloudinaryService) {
         this.userRepository = userRepository;
         this.productRepository = productRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @GetMapping
@@ -51,14 +56,24 @@ public class DashboardController {
     }
 
     @PostMapping("/producto/nuevo")
-    public String addProduct(@ModelAttribute("newProduct") Product newProduct, Authentication authentication) {
+    public String addProduct(@ModelAttribute("newProduct") Product newProduct, 
+                             @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+                             Authentication authentication) {
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email).orElseThrow();
 
         newProduct.setSeller(currentUser);
-        // Si no suben imagen, ponemos una por defecto para no romper el front
-        if (newProduct.getImage() == null || newProduct.getImage().trim().isEmpty()) {
-            newProduct.setImage("default-product.jpg");
+        
+        try {
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String imageUrl = cloudinaryService.uploadImage(imageFile);
+                newProduct.setImage(imageUrl);
+            } else if (newProduct.getImage() == null || newProduct.getImage().trim().isEmpty()) {
+                newProduct.setImage("default-product.jpg");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/dashboard?error=image_upload_failed";
         }
         
         productRepository.save(newProduct);

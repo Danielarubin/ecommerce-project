@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${producto.name}">Detalle del Producto</title>
+    <!-- Incluye aquí tus estilos CSS si los tienes -->
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f9f9f9; }
+        .product-container { display: flex; max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .product-image { flex: 1; padding: 20px; }
+        .product-image img { width: 100%; max-width: 400px; border-radius: 8px; }
+        .product-details { flex: 1; padding: 20px; }
+        .product-title { font-size: 28px; font-weight: bold; margin-bottom: 10px; }
+        .product-brand { color: #666; font-size: 16px; margin-bottom: 20px; }
+        .product-price { font-size: 24px; color: #e44d26; font-weight: bold; margin-bottom: 20px; }
+        .product-stock { font-size: 14px; color: #28a745; margin-bottom: 20px; }
+        .btn-cart { background-color: #007bff; color: white; padding: 12px 24px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+        .btn-cart:hover { background-color: #0056b3; }
+        .quantity-input { width: 60px; padding: 8px; font-size: 16px; margin-right: 10px; border: 1px solid #ccc; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <div style="max-width: 1000px; margin: 0 auto 20px auto;">
+        <a href="/" style="text-decoration: none; color: #007bff;">&larr; Volver a la tienda</a>
+    </div>
+
+    <div class="product-container">
+        <div class="product-image">
+            <img th:src="${producto.image}" alt="Imagen del Producto" />
+        </div>
+        <div class="product-details">
+            <div class="product-title" th:text="${producto.name}">Nombre del Producto</div>
+            <div class="product-brand" th:text="'Marca: ' + ${producto.brand}">Marca</div>
+            <div class="product-price" th:text="'$' + ${producto.price}">$0.00</div>
+            
+            <div th:if="${producto.stock > 0}">
+                <div class="product-stock" th:text="'Stock disponible: ' + ${producto.stock} + ' unidades'">Stock disponible</div>
+                
+                <form th:action="@{/cart/add/{id}(id=${producto.id})}" method="post" style="display: flex; align-items: center;">
+                    <input type="number" name="quantity" value="1" min="1" th:max="${producto.stock}" class="quantity-input" required>
+                    <button type="submit" class="btn-cart">Añadir al Carrito</button>
+                </form>
+            </div>
+            
+            <div th:if="${producto.stock <= 0}">
+                <div class="product-stock" style="color: red;">Agotado</div>
+                <button class="btn-cart" style="background-color: #ccc; cursor: not-allowed;" disabled>Agotado</button>
+            </div>
+            
+            <div style="margin-top: 30px; font-size: 14px; color: #555;">
+                <p><strong>Vendedor:</strong> <span th:text="${producto.seller.firstName + ' ' + producto.seller.lastName}">Nombre Vendedor</span></p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
