@@ -1,59 +1,42 @@
 package com.school.ecommerce.controller;
 
-import com.school.ecommerce.service.MockDataService;
+import com.school.ecommerce.model.Role;
+import com.school.ecommerce.model.Product;
+import com.school.ecommerce.repository.ProductRepository;
+import com.school.ecommerce.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import jakarta.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.List;
-
 @Controller
 public class HomeController {
 
-    private final MockDataService mockDataService;
+    private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public HomeController(MockDataService mockDataService) {
-        this.mockDataService = mockDataService;
+    public HomeController(ProductRepository productRepository, UserRepository userRepository) {
+        this.productRepository = productRepository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/")
     public String index(Model model) {
-        model.addAttribute("productos", mockDataService.getProductos());
-        model.addAttribute("creadores", mockDataService.getCreadores());
+        // Leemos todos los productos desde PostgreSQL
+        model.addAttribute("productos", productRepository.findAll());
+        // Leemos a los usuarios que son vendedores para mostrarlos en el index
+        model.addAttribute("creadores", userRepository.findByRole(Role.SELLER));
         return "index";
     }
 
-    @SuppressWarnings("unchecked")
-    @GetMapping("/favoritos")
-    public String favoritos(HttpSession session, Model model) {
-        List<Long> favIds = (List<Long>) session.getAttribute("favorites");
-        if (favIds == null) {
-            favIds = new ArrayList<>();
+    @GetMapping("/product/{id}")
+    public String productDetails(@PathVariable Long id, Model model) {
+        Optional<Product> optionalProduct = productRepository.findById(id);
+        if (optionalProduct.isPresent()) {
+            model.addAttribute("producto", optionalProduct.get());
+            return "producto";
         }
-        model.addAttribute("favoritos", mockDataService.getProductsByIds(favIds));
-        return "favorites";
-    }
-
-    @GetMapping("/creadores")
-    public String creadores(Model model) {
-        model.addAttribute("creadores", mockDataService.getCreadores());
-        return "creators";
-    }
-
-    @GetMapping("/tiendas")
-    public String tiendas(Model model) {
-        model.addAttribute("creadores", mockDataService.getCreadores());
-        return "stores";
-    }
-
-    @GetMapping("/colecciones")
-    public String colecciones(Model model) {
-        // Simple collection grouping logic for the mock
-        model.addAttribute("productos", mockDataService.getProductos());
-        return "collections";
+        return "redirect:/";
     }
 }

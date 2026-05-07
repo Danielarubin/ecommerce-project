@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${errorCode} + ' - ' + ${errorTitle}">Error - Bazar</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <style>
+        .error-container {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        .error-code {
+            font-size: 8rem;
+            font-weight: 800;
+            color: var(--primary-color, #1a1a1a);
+            margin: 0;
+            line-height: 1;
+            letter-spacing: -0.05em;
+        }
+        .error-title {
+            font-size: 2rem;
+            margin: 1rem 0;
+            font-weight: 600;
+        }
+        .error-message {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 500px;
+            margin-bottom: 2.5rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div></div>
+        <a class="nav-logo" th:href="@{/}">Baz<span>ar</span>cito</a>
+        <div></div>
+    </nav>
+
+    <div class="error-container">
+        <h1 class="error-code" th:text="${errorCode}">404</h1>
+        <h2 class="error-title" th:text="${errorTitle}">Página no encontrada</h2>
+        <p class="error-message" th:text="${errorMessage}">Lo sentimos, pero la página que buscas no existe.</p>
+        <a th:href="@{/}" class="btn-primary" style="padding: 1rem 2.5rem; text-decoration:none;">Volver al Inicio</a>
+    </div>
+</body>
+</html>
