@@ -45,6 +45,10 @@ public class DashboardController {
 
         model.addAttribute("user", currentUser);
 
+        if (currentUser.getRole() == Role.ADMIN) {
+            return "redirect:/admin";
+        }
+
         if (currentUser.getRole() == Role.SELLER) {
             model.addAttribute("misProductos", productRepository.findBySeller(currentUser));
             model.addAttribute("newProduct", new Product());
@@ -68,8 +72,8 @@ public class DashboardController {
             if (imageFile != null && !imageFile.isEmpty()) {
                 String imageUrl = cloudinaryService.uploadImage(imageFile);
                 newProduct.setImage(imageUrl);
-            } else if (newProduct.getImage() == null || newProduct.getImage().trim().isEmpty()) {
-                newProduct.setImage("default-product.jpg");
+            } else if (newProduct.getImage() != null && newProduct.getImage().trim().isEmpty()) {
+                newProduct.setImage(null);
             }
         } catch (Exception e) {
             e.printStackTrace();

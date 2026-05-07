@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")
@@ -42,7 +43,7 @@ public class ApiController {
         List<CartItemDto> cart = getCart(session);
         boolean found = false;
         for (CartItemDto cartItem : cart) {
-            if (cartItem.getId().equals(item.getId())) {
+            if (cartItem.getId().equals(item.getId()) && Objects.equals(cartItem.getSelectedSize(), item.getSelectedSize())) {
                 cartItem.setQty(cartItem.getQty() + 1);
                 found = true;
                 break;

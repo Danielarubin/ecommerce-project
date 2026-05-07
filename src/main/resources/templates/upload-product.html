@@ -7,70 +7,246 @@
     <title>Subir Pieza - Bazar</title>
     <link rel="stylesheet" th:href="@{/css/index.css}">
     <style>
+        body { background: #F5F0E7; }
         .upload-wrapper {
             min-height: calc(100vh - 70px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 4rem 2rem;
-            background: var(--bg-secondary);
+            padding: 6rem 2rem 4rem;
+            background:
+                linear-gradient(130deg, rgba(255,179,138,0.18), rgba(255,255,255,0) 35%),
+                #F5F0E7;
         }
-        .upload-card {
-            background: white;
-            padding: 4rem;
-            border-radius: 4px;
-            max-width: 600px;
-            width: 100%;
+        .upload-shell {
+            max-width: 1180px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: minmax(320px, 0.9fr) minmax(360px, 1.1fr);
+            gap: 1.5rem;
+            align-items: start;
+        }
+        .upload-preview-panel,
+        .upload-form-panel {
+            background: var(--bg-primary);
             border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .upload-preview-panel {
+            position: sticky;
+            top: 6rem;
         }
         .upload-title {
             font-family: var(--font-serif);
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 2rem;
-            line-height: 1.1;
+            font-size: clamp(2.3rem, 5vw, 4rem);
+            font-weight: 800;
+            margin: 0;
+            line-height: 0.98;
+            color: var(--text-dark);
+        }
+        .upload-kicker {
+            color: var(--text-muted);
+            font-size: 0.68rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+        .upload-copy {
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-top: 1rem;
+            max-width: 520px;
+        }
+        .upload-form-panel {
+            padding: 2rem;
+        }
+        .upload-heading {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border-color);
         }
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
         }
         .form-label {
             display: block;
             margin-bottom: 0.5rem;
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-dark);
         }
         .form-control {
             width: 100%;
-            padding: 0.8rem;
+            min-height: 48px;
+            padding: 0.85rem 0.9rem;
             border: 1px solid var(--border-color);
             background: var(--bg-primary);
             font-family: var(--font-sans);
-            font-size: 1rem;
-            border-radius: 4px;
+            font-size: 0.95rem;
+            border-radius: 6px;
         }
         .form-control:focus {
             outline: none;
             border-color: var(--text-dark);
+            box-shadow: 0 0 0 3px rgba(255,179,138,0.28);
         }
         textarea.form-control {
             resize: vertical;
-            min-height: 100px;
+            min-height: 132px;
         }
         .btn-submit {
             margin-top: 1rem;
             width: 100%;
             justify-content: center;
+            min-height: 52px;
         }
         .file-upload-box {
-            border: 2px dashed var(--border-color);
-            padding: 2rem;
+            border: 1px dashed #CBB89F;
+            padding: 1rem;
             text-align: center;
-            background: var(--bg-primary);
-            border-radius: 4px;
+            background: #FFF9F1;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
+            min-height: 108px;
+            display: grid;
+            place-items: center;
+            gap: 0.35rem;
         }
         .file-upload-box:hover {
             border-color: var(--text-dark);
+            background: #FFF4E7;
+        }
+        .file-upload-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        .file-upload-text {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+        .file-upload-hint {
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+        .preview-frame {
+            aspect-ratio: 4 / 5;
+            background: #EDE4D7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .preview-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        .preview-empty {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 2rem;
+            font-size: 0.78rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .preview-meta {
+            padding: 1.25rem;
+            border-top: 1px solid var(--border-color);
+        }
+        .preview-name {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            overflow-wrap: anywhere;
+        }
+        .preview-price {
+            margin-top: 0.25rem;
+            font-weight: 700;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .size-section {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.2rem 0;
+            background: #FFFDF9;
+        }
+        .collection-hint {
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            margin-top: 0.45rem;
+            line-height: 1.5;
+        }
+        .size-title {
+            font-size: 0.72rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-dark);
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+        .size-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .size-pill {
+            position: relative;
+            cursor: pointer;
+        }
+        .size-pill input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .size-pill span {
+            display: inline-flex;
+            min-width: 44px;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            border-radius: 999px;
+            padding: 0.38rem 0.72rem;
+            background: var(--bg-primary);
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+        .size-pill input:checked + span {
+            background: var(--text-dark);
+            color: var(--bg-primary);
+            border-color: var(--text-dark);
+        }
+        .error-box {
+            background:#FDECEC;
+            border:1px solid #F5C2C2;
+            color:#A11A1A;
+            padding:0.85rem 1rem;
+            border-radius:6px;
+            margin-bottom:1rem;
+            font-size: 0.88rem;
+        }
+        @media (max-width: 900px) {
+            .upload-shell { grid-template-columns: 1fr; }
+            .upload-preview-panel { position: static; }
+        }
+        @media (max-width: 560px) {
+            .upload-wrapper { padding-left: 1rem; padding-right: 1rem; }
+            .upload-heading, .upload-form-panel { padding: 1.25rem; }
+            .form-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -84,38 +260,130 @@
         </div>
     </nav>
 
-    <div class="upload-wrapper">
-        <div class="upload-card">
-            <h1 class="upload-title">Sube una <em>Pieza</em></h1>
-            
-            <form th:action="@{/vender/subir-producto}" method="POST" enctype="multipart/form-data">
+    <main class="upload-wrapper">
+        <div class="upload-shell">
+            <aside class="upload-preview-panel">
+                <div class="preview-frame">
+                    <img id="imagePreview" alt="Vista previa de la pieza">
+                    <div id="previewEmpty" class="preview-empty">Vista previa de la pieza</div>
+                </div>
+                <div class="preview-meta">
+                    <div class="preview-name" id="previewName">Nueva pieza</div>
+                    <div class="preview-price" id="previewPrice">$0 MXN</div>
+                </div>
+            </aside>
+
+            <section class="upload-form-panel">
+                <div class="upload-heading">
+                    <div class="upload-kicker">Nueva publicacion</div>
+                    <h1 class="upload-title">Sube una <em>Pieza</em></h1>
+                    <p class="upload-copy">Carga una fotografia clara y completa los datos para que tu pieza aparezca en tu tienda, colecciones y tarjetas de creador.</p>
+                </div>
+
+                <form th:action="@{/vender/subir-producto}" method="POST" enctype="multipart/form-data" style="padding-top:1.5rem;">
+                    <div th:if="${param.error != null}" class="error-box">
+                        <span th:if="${param.error[0] == 'image-required'}">Debes subir una fotografia para publicar la prenda.</span>
+                        <span th:if="${param.error[0] == 'image-upload'}">No se pudo subir la fotografia. Intenta de nuevo.</span>
+                    </div>
+
                 <div class="form-group">
                     <label class="form-label" for="name">Título de la Pieza</label>
                     <input type="text" id="name" name="name" class="form-control" required placeholder="Ej. Blazer Oversize Lino">
                 </div>
-                <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-grid">
                     <div>
                         <label class="form-label" for="price">Precio (MXN)</label>
-                        <input type="number" id="price" name="price" class="form-control" required placeholder="Ej. 1200">
+                        <input type="number" id="price" name="price" class="form-control" min="0" step="1" required placeholder="Ej. 1200">
+                    </div>
+                    <div>
+                        <label class="form-label" for="stock">Stock</label>
+                        <input type="number" id="stock" name="stock" class="form-control" min="1" step="1" value="1" required>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="description">Descripción</label>
                     <textarea id="description" name="description" class="form-control" required placeholder="Describe los detalles, tela, condición y la historia de esta pieza..."></textarea>
                 </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="collectionId">Colección</label>
+                    <select id="collectionId" name="collectionId" class="form-control">
+                        <option value="">Sin colección</option>
+                        <option th:each="collection : ${collections}"
+                                th:value="${collection.id}"
+                                th:text="${collection.name}">Vestidos de noche</option>
+                    </select>
+                    <div class="collection-hint">Puedes crear colecciones desde tu Creator Studio, por ejemplo: Vestidos de noche, Denim intervenido o Accesorios vintage.</div>
+                </div>
+
+                <div class="size-section">
+                    <div class="size-title">Tallas disponibles</div>
+                    <div class="file-upload-hint" style="text-align:left;margin-bottom:.75rem;">Selecciona tallas de ropa, calzado o ambas si aplica.</div>
+                    <div class="size-grid">
+                        <label class="size-pill"><input type="checkbox" name="sizes" value="XXS"><span>XXS</span></label>
+                        <label class="size-pill"><input type="checkbox" name="sizes" value="XS"><span>XS</span></label>
+                        <label class="size-pill"><input type="checkbox" name="sizes" value="S"><span>S</span></label>
+                        <label class="size-pill"><input type="checkbox" name="sizes" value="M"><span>M</span></label>
+                        <label class="size-pill"><input type="checkbox" name="sizes" value="L"><span>L</span></label>
+                        <label class="size-pill"><input type="checkbox" name="sizes" value="XL"><span>XL</span></label>
+                        <label class="size-pill"><input type="checkbox" name="sizes" value="XXL"><span>XXL</span></label>
+                    </div>
+                    <div class="size-grid" style="margin-bottom:0;">
+                        <label class="size-pill"><input type="checkbox" name="sizes" value="22 MX"><span>22 MX</span></label>
+                        <label class="size-pill"><input type="checkbox" name="sizes" value="23 MX"><span>23 MX</span></label>
+                        <label class="size-pill"><input type="checkbox" name="sizes" value="24 MX"><span>24 MX</span></label>
+                        <label class="size-pill"><input type="checkbox" name="sizes" value="25 MX"><span>25 MX</span></label>
+                        <label class="size-pill"><input type="checkbox" name="sizes" value="26 MX"><span>26 MX</span></label>
+                        <label class="size-pill"><input type="checkbox" name="sizes" value="27 MX"><span>27 MX</span></label>
+                        <label class="size-pill"><input type="checkbox" name="sizes" value="28 MX"><span>28 MX</span></label>
+                        <label class="size-pill"><input type="checkbox" name="sizes" value="29 MX"><span>29 MX</span></label>
+                    </div>
+                </div>
                 
                 <div class="form-group">
                     <label class="form-label">Fotografía</label>
                     <div class="file-upload-box" onclick="document.getElementById('image').click()">
-                        <span style="font-size: 2rem; margin-bottom: 0.5rem; display: block;">📸</span>
-                        Haz clic para subir una imagen de la pieza (JPG, PNG)
+                        <span class="file-upload-icon">+</span>
+                        <span class="file-upload-text" id="fileLabel">Seleccionar imagen</span>
+                        <span class="file-upload-hint">JPG, PNG o WebP</span>
                         <input type="file" id="image" name="image" style="display: none;" accept="image/*" required>
                     </div>
                 </div>
                 
                 <button type="submit" class="btn-primary btn-submit">Publicar Pieza</button>
             </form>
+            </section>
         </div>
-    </div>
+    </main>
+
+    <script>
+        const imageInput = document.getElementById('image');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewEmpty = document.getElementById('previewEmpty');
+        const fileLabel = document.getElementById('fileLabel');
+        const nameInput = document.getElementById('name');
+        const priceInput = document.getElementById('price');
+        const previewName = document.getElementById('previewName');
+        const previewPrice = document.getElementById('previewPrice');
+
+        imageInput.addEventListener('change', () => {
+            const file = imageInput.files && imageInput.files[0];
+            if (!file) return;
+
+            imagePreview.src = URL.createObjectURL(file);
+            imagePreview.style.display = 'block';
+            previewEmpty.style.display = 'none';
+            fileLabel.textContent = file.name;
+        });
+
+        nameInput.addEventListener('input', () => {
+            previewName.textContent = nameInput.value.trim() || 'Nueva pieza';
+        });
+
+        priceInput.addEventListener('input', () => {
+            const value = Number(priceInput.value || 0);
+            previewPrice.textContent = '$' + value.toLocaleString('es-MX') + ' MXN';
+        });
+    </script>
 </body>
 </html>

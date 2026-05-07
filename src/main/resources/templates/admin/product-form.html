@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar prenda - Bazarcito</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <style>
+        body { background:#F5F0E7; }
+        .shell { max-width:960px; margin:0 auto; padding:6.5rem 2rem 5rem; }
+        .layout { display:grid; grid-template-columns:.8fr 1.2fr; gap:1rem; align-items:start; }
+        .card { background:var(--bg-primary); border:1px solid var(--border-color); border-radius:8px; padding:1.5rem; }
+        .title { font-family:var(--font-serif); font-size:clamp(2.1rem,6vw,4rem); line-height:1; margin-bottom:1.5rem; }
+        .preview { aspect-ratio:4/5; border-radius:8px; background:#EDE4D7; overflow:hidden; display:grid; place-items:center; color:var(--text-muted); text-transform:uppercase; font-size:.72rem; }
+        .preview img { width:100%; height:100%; object-fit:cover; }
+        .grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+        .form-group { margin-bottom:1rem; }
+        label { display:block; margin-bottom:.45rem; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--text-dark); }
+        input, select, textarea {
+            width:100%; min-height:48px; padding:.8rem .9rem; border:1px solid var(--border-color);
+            border-radius:6px; background:#FFFDF9; font-family:var(--font-sans); color:var(--text-dark);
+        }
+        textarea { min-height:120px; resize:vertical; }
+        .actions { display:flex; justify-content:space-between; gap:1rem; margin-top:1.5rem; flex-wrap:wrap; }
+        @media (max-width:800px) { .layout, .grid { grid-template-columns:1fr; } }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-links"><a th:href="@{/admin}">Admin</a><a th:href="@{/admin/prendas}">Prendas</a></div>
+        <a class="nav-logo" th:href="@{/}">Baz<span>ar</span>cito</a>
+        <div class="nav-right">
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" class="nav-action" style="background:none;border:none;cursor:pointer;">Cerrar sesion</button>
+            </form>
+        </div>
+    </nav>
+    <main class="shell">
+        <h1 class="title">Editar prenda</h1>
+        <div class="layout">
+            <aside class="card">
+                <div class="preview">
+                    <img th:if="${product.image != null and (product.image.startsWith('http') or product.image.startsWith('/uploads/'))}" th:src="${product.image}" th:alt="${product.name}">
+                    <span th:if="${product.image == null or !(product.image.startsWith('http') or product.image.startsWith('/uploads/'))}">Sin imagen</span>
+                </div>
+            </aside>
+            <section class="card">
+                <form th:action="@{/admin/prendas/{id}/editar(id=${product.id})}" method="post">
+                    <div class="grid">
+                        <div class="form-group">
+                            <label for="name">Nombre</label>
+                            <input id="name" name="name" required th:value="${product.name}">
+                        </div>
+                        <div class="form-group">
+                            <label for="brand">Marca</label>
+                            <input id="brand" name="brand" required th:value="${product.brand}">
+                        </div>
+                        <div class="form-group">
+                            <label for="price">Precio</label>
+                            <input id="price" name="price" required type="number" min="0" step="0.01" th:value="${product.price}">
+                        </div>
+                        <div class="form-group">
+                            <label for="stock">Stock</label>
+                            <input id="stock" name="stock" required type="number" min="0" step="1" th:value="${product.stock}">
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Estado</label>
+                            <select id="status" name="status" required>
+                                <option th:each="status : ${statuses}" th:value="${status}" th:text="${status}" th:selected="${status == product.status}">AVAILABLE</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sellerId">Tienda</label>
+                            <select id="sellerId" name="sellerId">
+                                <option value="">Sin tienda visible</option>
+                                <option th:each="seller : ${sellers}" th:value="${seller.id}" th:text="${seller.username}" th:selected="${product.seller != null and seller.id == product.seller.id}">Tienda</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="image">URL de imagen</label>
+                        <input id="image" name="image" th:value="${product.image}">
+                    </div>
+                    <div class="form-group">
+                        <label for="sizes">Tallas disponibles</label>
+                        <input id="sizes" name="sizes" placeholder="XS, S, M, 24 MX, 25 MX" th:value="${product.sizes != null ? #strings.listJoin(product.sizes, ', ') : ''}">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Descripcion</label>
+                        <textarea id="description" name="description" th:text="${product.description}"></textarea>
+                    </div>
+                    <div class="actions">
+                        <a th:href="@{/admin/prendas}" class="btn-link">Cancelar</a>
+                        <button type="submit" class="btn-primary">Guardar cambios</button>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </main>
+</body>
+</html>

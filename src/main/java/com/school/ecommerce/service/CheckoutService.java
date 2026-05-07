@@ -47,7 +47,7 @@ public class CheckoutService {
         BigDecimal totalAmount = BigDecimal.ZERO;
 
         for (CartItemDto item : cartItems) {
-            Product product = productRepository.findById(Long.parseLong(item.getId()))
+            Product product = productRepository.findById(item.getId())
                     .orElseThrow(() -> new IllegalStateException("Producto no encontrado con ID: " + item.getId()));
 
             if (product.getStock() < item.getQty()) {
@@ -62,6 +62,7 @@ public class CheckoutService {
             orderItem.setOrder(order);
             orderItem.setProduct(product);
             orderItem.setQuantity(item.getQty());
+            orderItem.setSelectedSize(item.getSelectedSize());
             orderItem.setUnitPrice(BigDecimal.valueOf(item.getPrice()));
 
             // Añadir el item a la orden y sumar al total

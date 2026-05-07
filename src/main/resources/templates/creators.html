@@ -1,82 +1,345 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creadores - Bazar</title>
+    <meta name="description" content="Descubre los creadores independientes de Bazarcito — diseñadores mexicanos con piezas únicas.">
+    <title>Creadores — Bazarcito</title>
     <link rel="stylesheet" th:href="@{/css/index.css}">
-</head>
+    <style>
+        body { background: #F5F0E7; }
+        .page-hero {
+            padding: 8rem 2.5rem 3.2rem;
+            border-bottom: 1px solid var(--border-color);
+            background:
+                linear-gradient(120deg, rgba(255,179,138,0.18), rgba(255,255,255,0) 42%),
+                var(--bg-primary);
+        }
+        .page-hero-inner {
+            max-width: 1180px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: end;
+            gap: 2rem;
+        }
+        .page-hero .sec-title { margin: 0; }
+        .page-copy {
+            color: var(--text-muted);
+            max-width: 580px;
+            margin-top: 1rem;
+            line-height: 1.7;
+        }
+        .creator-count {
+            font-size: 0.8rem; color: var(--text-muted);
+            letter-spacing: 0.08em; text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .creator-summary {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 1.25rem 2rem 0;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0,1fr));
+            gap: 1rem;
+        }
+        .summary-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            padding: 1rem 1.2rem;
+        }
+        .summary-card .k {
+            font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
+        }
+        .summary-card .v {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            color: var(--text-dark);
+        }
 
+        /* Empty state */
+        .empty-section {
+            text-align: center;
+            padding: 8rem 2rem;
+            grid-column: 1 / -1;
+        }
+        .empty-section .empty-icon {
+            font-size: 3rem; margin-bottom: 1.5rem; display: block;
+            opacity: 0.4;
+        }
+        .empty-section h3 {
+            font-family: var(--font-serif);
+            font-size: 2rem; font-weight: 700;
+            color: var(--text-dark); margin-bottom: 0.75rem;
+        }
+        .empty-section p {
+            color: var(--text-muted); font-size: 0.9rem;
+            max-width: 360px; margin: 0 auto 2rem; line-height: 1.7;
+        }
+
+        .creators-page {
+            padding: 3rem 2rem 5rem;
+            background: #F5F0E7;
+        }
+        .creators-page-grid {
+            max-width: 1180px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.25rem;
+        }
+        .creator-page-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .creator-page-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 34px rgba(42,33,24,0.08);
+        }
+        .creator-page-top {
+            padding: 1.35rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .creator-page-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: var(--font-serif);
+            font-size: 1.4rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .creator-page-name {
+            font-family: var(--font-serif);
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.1;
+        }
+        .creator-page-location {
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            margin-top: 0.25rem;
+        }
+        .creator-page-showcase {
+            display: grid;
+            grid-template-columns: 1.4fr 0.9fr;
+            gap: 0.5rem;
+            padding: 0 1.35rem 1.35rem;
+            min-height: 340px;
+        }
+        .creator-page-main,
+        .creator-page-side {
+            border-radius: 6px;
+            overflow: hidden;
+            background: #EDE4D7;
+            position: relative;
+        }
+        .creator-page-main {
+            min-height: 340px;
+        }
+        .creator-page-side-wrap {
+            display: grid;
+            gap: 0.5rem;
+            min-height: 340px;
+        }
+        .creator-page-showcase img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .creator-page-empty {
+            height: 100%;
+            display: grid;
+            place-items: center;
+            color: var(--text-muted);
+            font-size: 0.68rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            text-align: center;
+            padding: 1rem;
+        }
+        .creator-page-footer {
+            border-top: 1px solid var(--border-color);
+            padding: 1rem 1.35rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            background: #FFFDF9;
+        }
+        .product-count-badge {
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
+            border-radius: 100px; padding: 0.2rem 0.7rem;
+            font-size: 0.65rem; letter-spacing: 0.1em;
+            text-transform: uppercase; color: var(--text-muted);
+        }
+        .creator-page-tags { display:flex; gap:.5rem; flex-wrap:wrap; }
+        @media (max-width: 900px) {
+            .creator-summary { grid-template-columns: 1fr; padding-top: 1rem; }
+            .page-hero-inner { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 620px) {
+            .page-hero { padding-left: 1rem; padding-right: 1rem; }
+            .creators-page { padding-left: 1rem; padding-right: 1rem; }
+            .creator-page-showcase { grid-template-columns: 1fr; }
+            .creator-page-side-wrap { grid-template-columns: 1fr 1fr; min-height: 150px; }
+            .creator-page-main { min-height: 280px; }
+        }
+    </style>
+</head>
 <body>
-    <!-- MINIMAL NAVBAR -->
+    <!-- NAVBAR -->
     <nav class="nav">
         <div class="nav-links">
-            <a th:href="@{/colecciones}" href="#">Colecciones</a>
-            <a th:href="@{/creadores}" class="active" href="#">Creadores</a>
-            <a th:href="@{/tiendas}" href="#">Tiendas</a>
+            <a th:href="@{/colecciones}">Colecciones</a>
+            <a th:href="@{/creadores}" class="active">Creadores</a>
+            <a th:href="@{/tiendas}">Tiendas</a>
         </div>
-        <a class="nav-logo" th:href="@{/}" href="#">Baz<span>ar</span>cito</a>
+        <a class="nav-logo" th:href="@{/}">Baz<span>ar</span>cito</a>
         <div class="nav-right">
+            <a th:href="@{/vender}" class="nav-action">Vender</a>
             <span class="nav-action" id="btnSearch">Buscar</span>
-            <a th:href="@{/favoritos}" class="nav-action" style="font-size: 1.2rem; text-decoration: none;" aria-label="Favoritos">🖤</a>
-            <a th:if="${session.user == null}" th:href="@{/login}" class="nav-action">Acceder</a>
-            <a th:if="${session.user != null}" th:href="@{/logout}" class="nav-action" th:text="'Hola, ' + ${session.user} + ' (Salir)'">Salir</a>
+            <a th:href="@{/favoritos}" class="nav-action" style="font-size:1.1rem;text-decoration:none;" aria-label="Favoritos">🤍</a>
+            <a sec:authorize="isAnonymous()" th:href="@{/login}" class="nav-action">Acceder</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/dashboard}" class="nav-action">Mi Cuenta</a>
             <div class="nav-cart" id="btnCart">
                 <span class="nav-action">Bolsa</span>
-                <div style="position: relative;">
+                <div style="position:relative;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-                        <line x1="3" y1="6" x2="21" y2="6" />
-                        <path d="M16 10a4 4 0 0 1-8 0" />
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
                     </svg>
-                    <span id="cartBadge" class="cart-badge" style="display: none;">0</span>
+                    <span id="cartBadge" class="cart-badge" style="display:none;">0</span>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- CREATORS SECTION -->
-    <section class="creators" style="padding-top: 8rem; min-height: 80vh;">
-        <div class="c-hdr-wrap">
-            <div class="sec-hdr" style="margin-bottom:0">
+    <!-- PAGE HERO -->
+    <div class="page-hero">
+        <div class="page-hero-inner">
+            <div>
                 <span class="sec-ey">Nuestra Comunidad</span>
-                <h2 class="sec-title">Descubre a los <em>Creadores</em></h2>
+                <h1 class="sec-title">Descubre los <em>Creadores</em></h1>
+                <p class="page-copy">Tiendas independientes, perfiles reales y piezas registradas directamente por quienes las seleccionan o las crean.</p>
             </div>
+            <span class="creator-count"
+                  th:text="${creadores != null ? creadores.size() + ' creadores registrados' : '0 creadores'}">
+                0 creadores
+            </span>
         </div>
+    </div>
+    <section class="creator-summary">
+        <article class="summary-card">
+            <div class="k">Creadores activos</div>
+            <div class="v" th:text="${creadores != null ? creadores.size() : 0}">0</div>
+        </article>
+        <article class="summary-card">
+            <div class="k">Tiendas con piezas</div>
+            <div class="v" th:text="${tiendasConPiezas != null ? tiendasConPiezas : 0}">0</div>
+        </article>
+        <article class="summary-card">
+            <div class="k">Comunidad</div>
+            <div class="v">MX</div>
+        </article>
+    </section>
 
-        <div class="creator-grid">
-            <!-- Thymeleaf loop -->
-            <div class="creator-card" th:each="creador : ${creadores}">
-                <div class="creator-header">
-                    <div class="creator-avatar"
-                        th:style="${creador.avatarGradient != null and !creador.avatarGradient.isEmpty() ? 'background:' + creador.avatarGradient : ''}"
-                        th:text="${creador.avatarInitial}">D</div>
-                    <div class="creator-meta">
-                        <h3 th:text="${creador.name}">Daniela's Archive</h3>
-                        <span th:text="${creador.location + ' • ' + creador.numberOfItems + ' piezas'}">
-                            Ciudad de México • 42 piezas
-                        </span>
+    <!-- CREATORS SECTION -->
+    <section class="creators-page">
+        <div class="creators-page-grid">
+
+            <!-- ── Loop real de la BD ── -->
+            <th:block th:if="${creadores != null and !creadores.isEmpty()}">
+                <article class="creator-page-card" th:each="creador : ${creadores}"
+                     th:onclick="|window.location.href='@{/tienda/{id}(id=${creador.id})}'|"
+                     style="cursor:pointer;">
+                    <div class="creator-page-top">
+                        <div class="creator-page-avatar"
+                             th:style="${creador.avatarGradient != null and !creador.avatarGradient.isEmpty()
+                                        ? 'background:' + creador.avatarGradient
+                                        : 'background:linear-gradient(135deg,#FFD6BA,#FFB38A)'}"
+                             th:text="${creador.avatarInitial != null
+                                        ? creador.avatarInitial
+                                        : (creador.firstName != null
+                                            ? creador.firstName.substring(0,1).toUpperCase()
+                                            : creador.username.substring(0,1).toUpperCase())}">C</div>
+                        <div>
+                            <h3 class="creator-page-name" th:text="${creador.firstName != null
+                                           ? creador.firstName + ' ' + (creador.lastName != null ? creador.lastName : '')
+                                           : creador.username}">Creador</h3>
+                            <div class="creator-page-location" th:text="${(creador.location != null and !creador.location.isEmpty() ? creador.location : 'Sin ubicacion registrada')}">Sin ubicacion registrada</div>
+                        </div>
                     </div>
-                </div>
-                <div class="creator-showcase">
-                    <div class="cs-main"
-                        th:style="${creador.mainBg != null and !creador.mainBg.isEmpty() ? 'background:' + creador.mainBg : ''}">
+
+                    <!-- Showcase: imágenes de productos reales -->
+                    <div class="creator-page-showcase">
+                        <div class="creator-page-main"
+                             th:style="${creador.mainBg != null ? 'background:' + creador.mainBg : 'background:#EBCFC0'}"
+                             th:with="p0=${!creador.products.isEmpty() ? creador.products[0] : null}">
+                            <img th:if="${p0 != null and p0.image != null and (p0.image.startsWith('http') or p0.image.startsWith('/uploads/'))}"
+                                 th:src="${p0.image}" th:alt="${p0.name}">
+                            <div class="creator-page-empty" th:if="${p0 == null or p0.image == null or !(p0.image.startsWith('http') or p0.image.startsWith('/uploads/'))}">Sin piezas visibles</div>
+                        </div>
+                        <div class="creator-page-side-wrap">
+                            <div class="creator-page-side"
+                                 th:style="${creador.sub1Bg != null ? 'background:' + creador.sub1Bg : 'background:#E8DCCB'}"
+                                 th:with="p1=${creador.products.size() > 1 ? creador.products[1] : null}">
+                                <img th:if="${p1 != null and p1.image != null and (p1.image.startsWith('http') or p1.image.startsWith('/uploads/'))}"
+                                     th:src="${p1.image}" th:alt="${p1.name}">
+                                <div class="creator-page-empty" th:if="${p1 == null or p1.image == null or !(p1.image.startsWith('http') or p1.image.startsWith('/uploads/'))}">Proximamente</div>
+                            </div>
+                            <div class="creator-page-side"
+                                 th:style="${creador.sub2Bg != null ? 'background:' + creador.sub2Bg : 'background:#DFD0E8'}"
+                                 th:with="p2=${creador.products.size() > 2 ? creador.products[2] : null}">
+                                <img th:if="${p2 != null and p2.image != null and (p2.image.startsWith('http') or p2.image.startsWith('/uploads/'))}"
+                                     th:src="${p2.image}" th:alt="${p2.name}">
+                                <div class="creator-page-empty" th:if="${p2 == null or p2.image == null or !(p2.image.startsWith('http') or p2.image.startsWith('/uploads/'))}">Proximamente</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="cs-sub1"
-                        th:style="${creador.sub1Bg != null and !creador.sub1Bg.isEmpty() ? 'background:' + creador.sub1Bg : ''}">
+
+                    <div class="creator-page-footer">
+                        <div class="creator-page-tags">
+                            <th:block th:if="${!creador.tags.isEmpty()}">
+                                <span class="c-tag" th:each="tag : ${creador.tags}" th:text="${tag}">Tag</span>
+                            </th:block>
+                            <span class="product-count-badge"
+                                  th:text="${creador.products.size()} + ' piezas'">0 piezas</span>
+                        </div>
+                        <a th:href="@{/tienda/{id}(id=${creador.id})}" class="btn-outline" onclick="event.stopPropagation();">Ver Tienda</a>
                     </div>
-                    <div class="cs-sub2"
-                        th:style="${creador.sub2Bg != null and !creador.sub2Bg.isEmpty() ? 'background:' + creador.sub2Bg : ''}">
-                    </div>
-                </div>
-                <div class="creator-footer">
-                    <div class="creator-tags">
-                        <span class="c-tag" th:each="tag : ${creador.tags}" th:text="${tag}">Vintage</span>
-                    </div>
-                    <a th:href="@{/tienda/{h}(h=${creador.handle})}" href="#" class="btn-outline">Visitar Tienda</a>
-                </div>
+                </article>
+            </th:block>
+
+            <!-- ── Empty state ── -->
+            <div th:if="${creadores == null or creadores.isEmpty()}" class="empty-section">
+                <span class="empty-icon">✦</span>
+                <h3>Aún no hay creadores</h3>
+                <p>Sé el primero en abrir tu espacio editorial en Bazarcito y vender tus piezas únicas.</p>
+                <a th:href="@{/vender}" class="btn-primary" style="display:inline-flex;text-decoration:none;">
+                    Convertirme en Creador
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
             </div>
+
         </div>
     </section>
 
@@ -84,21 +347,28 @@
     <footer class="footer">
         <div class="f-grid">
             <div>
-                <div class="f-logo">Baz<span>a</span>r</div>
-                <p class="f-desc">Un marketplace editorial para creadores independientes y piezas que importan.</p>
+                <div class="f-logo">Baz<span>ar</span>cito</div>
+                <p class="f-desc">Marketplace editorial para creadores independientes y piezas que importan.</p>
             </div>
             <div class="f-col">
                 <div class="f-col-title">Explorar</div>
                 <ul>
-                    <li><a href="#">The Edit</a></li>
-                    <li><a href="#">Archivos</a></li>
-                    <li><a href="#">Creadores</a></li>
-                    <li><a href="#">Espacios</a></li>
+                    <li><a th:href="@{/colecciones}">Colecciones</a></li>
+                    <li><a th:href="@{/creadores}">Creadores</a></li>
+                    <li><a th:href="@{/tiendas}">Tiendas</a></li>
+                    <li><a th:href="@{/favoritos}">Favoritos</a></li>
+                </ul>
+            </div>
+            <div class="f-col">
+                <div class="f-col-title">Vender</div>
+                <ul>
+                    <li><a th:href="@{/vender}">Abrir tienda</a></li>
+                    <li><a th:href="@{/register}">Registrarse</a></li>
                 </ul>
             </div>
         </div>
         <div class="f-bot">
-            <span>© 2025 Bazar Editorial.</span>
+            <span>© 2025 Bazarcito.</span>
             <div class="f-leg">
                 <a href="#">Privacidad</a>
                 <a href="#">Términos</a>
@@ -106,7 +376,7 @@
         </div>
     </footer>
 
-    <!-- OVERLAYS AND CART -->
+    <!-- SEARCH OVERLAY -->
     <div id="searchOverlay" class="search-overlay">
         <div class="search-header">
             <input type="text" id="searchInput" placeholder="Buscar piezas, creadores...">
@@ -115,6 +385,7 @@
         <div class="search-results" id="searchResults"></div>
     </div>
 
+    <!-- CART DRAWER -->
     <div id="cartDrawer" class="cart-drawer">
         <div class="cart-header">
             <h3>Tu Bolsa</h3>
@@ -128,10 +399,9 @@
                 <span>Total</span>
                 <span id="cartTotalValue">$0</span>
             </div>
-            <a th:href="@{/checkout}" class="btn-primary" style="width: 100%; justify-content: center; text-decoration: none;">Proceder al pago</a>
+            <a th:href="@{/checkout}" class="btn-primary" style="width:100%;justify-content:center;text-decoration:none;">Proceder al pago</a>
         </div>
     </div>
-    
     <div id="drawerOverlay" class="drawer-overlay"></div>
 
     <script th:src="@{/js/app.js}"></script>

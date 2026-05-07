@@ -6,6 +6,7 @@ public class CartItemDto {
     private String brand;
     private Double price;
     private String image;
+    private String selectedSize;
     private Integer qty;
 
     public CartItemDto() {}
@@ -24,6 +25,9 @@ public class CartItemDto {
 
     public String getImage() { return image; }
     public void setImage(String image) { this.image = image; }
+
+    public String getSelectedSize() { return selectedSize; }
+    public void setSelectedSize(String selectedSize) { this.selectedSize = selectedSize; }
 
     public Integer getQty() { return qty; }
     public void setQty(Integer qty) { this.qty = qty; }

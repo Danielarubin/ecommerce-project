@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar creador - Bazarcito</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <style>
+        body { background:#F5F0E7; }
+        .shell { max-width:920px; margin:0 auto; padding:6.5rem 2rem 5rem; }
+        .card { background:var(--bg-primary); border:1px solid var(--border-color); border-radius:8px; padding:2rem; }
+        .title { font-family:var(--font-serif); font-size:clamp(2.1rem,6vw,4rem); line-height:1; margin-bottom:1.5rem; }
+        .grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+        .form-group { margin-bottom:1rem; }
+        label { display:block; margin-bottom:.45rem; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--text-dark); }
+        input, select, textarea {
+            width:100%; min-height:48px; padding:.8rem .9rem; border:1px solid var(--border-color);
+            border-radius:6px; background:#FFFDF9; font-family:var(--font-sans); color:var(--text-dark);
+        }
+        textarea { min-height:90px; resize:vertical; }
+        .actions { display:flex; justify-content:space-between; gap:1rem; margin-top:1.5rem; flex-wrap:wrap; }
+        .error { background:#FFF3F0; border:1px solid #F4B6A9; color:#9A2A20; padding:.85rem 1rem; border-radius:8px; margin-bottom:1rem; }
+        @media (max-width:700px) { .grid { grid-template-columns:1fr; } }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-links"><a th:href="@{/admin}">Admin</a><a th:href="@{/admin/creadores}">Creadores</a></div>
+        <a class="nav-logo" th:href="@{/}">Baz<span>ar</span>cito</a>
+        <div class="nav-right">
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" class="nav-action" style="background:none;border:none;cursor:pointer;">Cerrar sesion</button>
+            </form>
+        </div>
+    </nav>
+    <main class="shell">
+        <section class="card">
+            <h1 class="title">Editar usuario</h1>
+            <div th:if="${param.error}" class="error">El correo o nombre de tienda ya existe.</div>
+            <form th:action="@{/admin/creadores/{id}/editar(id=${managedUser.id})}" method="post">
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="username">Nombre visible / tienda</label>
+                        <input id="username" name="username" required maxlength="50" th:value="${managedUser.username}">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Correo</label>
+                        <input id="email" name="email" type="email" required th:value="${managedUser.email}">
+                    </div>
+                    <div class="form-group">
+                        <label for="firstName">Nombre</label>
+                        <input id="firstName" name="firstName" th:value="${managedUser.firstName}">
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Apellido</label>
+                        <input id="lastName" name="lastName" th:value="${managedUser.lastName}">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Telefono</label>
+                        <input id="phone" name="phone" th:value="${managedUser.phone}">
+                    </div>
+                    <div class="form-group">
+                        <label for="role">Rol</label>
+                        <select id="role" name="role" required>
+                            <option th:each="role : ${roles}" th:value="${role}" th:text="${role}" th:selected="${role == managedUser.role}">SELLER</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="location">Ubicacion</label>
+                        <input id="location" name="location" th:value="${managedUser.location}">
+                    </div>
+                    <div class="form-group">
+                        <label for="avatarInitial">Inicial avatar</label>
+                        <input id="avatarInitial" name="avatarInitial" maxlength="2" th:value="${managedUser.avatarInitial}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="tags">Etiquetas</label>
+                    <input id="tags" name="tags" th:value="${managedUser.tags != null ? #strings.listJoin(managedUser.tags, ', ') : ''}">
+                </div>
+                <div class="form-group">
+                    <label for="avatarGradient">Fondo avatar</label>
+                    <input id="avatarGradient" name="avatarGradient" th:value="${managedUser.avatarGradient}">
+                </div>
+                <div class="actions">
+                    <a th:href="@{/admin/creadores}" class="btn-link">Cancelar</a>
+                    <button type="submit" class="btn-primary">Guardar cambios</button>
+                </div>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

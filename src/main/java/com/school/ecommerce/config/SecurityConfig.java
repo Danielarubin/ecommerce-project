@@ -1,9 +1,13 @@
 package com.school.ecommerce.config;
 
+import com.school.ecommerce.model.Role;
+import com.school.ecommerce.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -13,17 +17,28 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, UserRepository userRepository) throws Exception {
         http
             .csrf(csrf -> csrf.disable()) // Deshabilitado para simplificar pruebas iniciales
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login", "/register", "/css/**", "/images/**", "/js/**").permitAll()
+                .requestMatchers("/", "/error", "/login", "/register", "/css/**", "/images/**", "/js/**",
+                        "/uploads/**", "/actuator/**", "/colecciones", "/creadores", "/tiendas", "/tienda/**",
+                        "/favoritos", "/product/**", "/api/**").permitAll()
+                .requestMatchers("/admin/**").access((authenticationSupplier, context) -> {
+                    Authentication authentication = authenticationSupplier.get();
+                    boolean isAdmin = authentication != null
+                            && authentication.isAuthenticated()
+                            && userRepository.findByEmail(authentication.getName())
+                                    .map(user -> user.getRole() == Role.ADMIN)
+                                    .orElse(false);
+                    return new AuthorizationDecision(isAdmin);
+                })
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/", true)
+                .defaultSuccessUrl("/dashboard", true)
                 .usernameParameter("email")
                 .permitAll()
             )

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
@@ -20,8 +20,8 @@
         <div class="nav-right">
             <span class="nav-action" id="btnSearch">Buscar</span>
             <a th:href="@{/favoritos}" class="nav-action" style="font-size: 1.2rem; text-decoration: none;" aria-label="Favoritos">🖤</a>
-            <a th:if="${session.user == null}" th:href="@{/login}" class="nav-action">Acceder</a>
-            <a th:if="${session.user != null}" th:href="@{/logout}" class="nav-action" th:text="'Hola, ' + ${session.user} + ' (Salir)'">Salir</a>
+            <a sec:authorize="isAnonymous()" th:href="@{/login}" class="nav-action">Acceder</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/dashboard}" class="nav-action">Mi Cuenta</a>
             <div class="nav-cart" id="btnCart">
                 <span class="nav-action">Bolsa</span>
                 <div style="position: relative;">
@@ -43,23 +43,24 @@
             <h2 class="sec-title">Lista de <em>Favoritos</em></h2>
         </div>
 
-        <div th:if="${favoritos == null or #lists.isEmpty(favoritos)}" style="text-align: center; margin-top: 4rem; color: var(--text-muted);">
+        <div th:if="${favoriteProducts == null or #lists.isEmpty(favoriteProducts)}" style="text-align: center; margin-top: 4rem; color: var(--text-muted);">
             <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">Aún no tienes favoritos.</h3>
             <p>Explora nuestra colección y guarda tus piezas preferidas.</p>
             <a th:href="@{/}" class="btn-primary" style="margin-top: 2rem; display: inline-flex;">Explorar Piezas</a>
         </div>
 
-        <div th:if="${favoritos != null and !#lists.isEmpty(favoritos)}" class="editorial-grid-row2" style="margin-top: 3rem;">
+        <div th:if="${favoriteProducts != null and !#lists.isEmpty(favoriteProducts)}" class="editorial-grid-row2" style="margin-top: 3rem;">
             <!-- Loop through favorite products -->
-            <div th:each="prod : ${favoritos}" class="e-card e-card-r2 product-card"
+            <div th:each="prod : ${favoriteProducts}" class="e-card e-card-r2 product-card"
                  th:data-id="${prod.id}"
                  th:data-name="${prod.name}"
                  th:data-brand="${prod.brand}"
                  th:data-price="${prod.price}"
-                 th:data-image="${prod.image}">
+                 th:data-image="${prod.image}"
+                 th:data-status="${prod.status}">
                 <div class="e-img">
-                    <img th:src="@{'/images/' + ${prod.image}}" th:alt="${prod.name}">
-                    <button class="btn-fav active" aria-label="Quitar de favoritos">🖤</button>
+                    <img th:if="${prod.image != null and (prod.image.startsWith('http') or prod.image.startsWith('/uploads/'))}" th:src="${prod.image}" th:alt="${prod.name}">
+                    <button class="btn-fav active" aria-label="Quitar de favoritos">💖</button>
                     <button class="btn-add-cart">Añadir a bolsa</button>
                 </div>
                 <div class="e-info">
@@ -67,7 +68,7 @@
                         <div class="e-brand" th:text="${prod.brand}">Marca</div>
                         <div class="e-name" th:text="${prod.name}">Nombre Producto</div>
                     </div>
-                    <div class="e-price" th:text="${prod.price}">$0.00</div>
+                    <div class="e-price" th:text="'$' + ${#numbers.formatDecimal(prod.price, 1, 'COMMA', 0, 'POINT')}">$0</div>
                 </div>
             </div>
         </div>

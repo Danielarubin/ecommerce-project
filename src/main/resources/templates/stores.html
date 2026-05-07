@@ -1,82 +1,180 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tiendas - Bazar</title>
+    <meta name="description" content="Explora las tiendas independientes de Bazarcito — espacios únicos de diseñadores mexicanos.">
+    <title>Tiendas — Bazarcito</title>
     <link rel="stylesheet" th:href="@{/css/index.css}">
+    <style>
+        body { background: #F5F0E7; }
+        .page-hero {
+            padding: 8rem 2.5rem 3.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background:
+                linear-gradient(120deg, rgba(255,179,138,0.18), rgba(255,255,255,0) 42%),
+                var(--bg-primary);
+        }
+        .page-hero-inner {
+            max-width: 1180px;
+            margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: flex-end;
+            flex-wrap: wrap; gap: 1.5rem;
+        }
+        .creator-count {
+            font-size: 0.8rem; color: var(--text-muted); letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .creator-card {
+            border-radius: 8px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+        .creator-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 14px 34px rgba(42,33,24,0.08);
+        }
+        .empty-section {
+            text-align: center; padding: 8rem 2rem; grid-column: 1 / -1;
+        }
+        .empty-section .empty-icon { font-size: 3rem; margin-bottom: 1.5rem; display: block; opacity: 0.4; }
+        .empty-section h3 {
+            font-family: var(--font-serif); font-size: 2rem; font-weight: 700;
+            color: var(--text-dark); margin-bottom: 0.75rem;
+        }
+        .empty-section p {
+            color: var(--text-muted); font-size: 0.9rem;
+            max-width: 360px; margin: 0 auto 2rem; line-height: 1.7;
+        }
+        .product-count-badge {
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
+            border-radius: 100px; padding: 0.2rem 0.7rem;
+            font-size: 0.65rem; letter-spacing: 0.1em;
+            text-transform: uppercase; color: var(--text-muted);
+        }
+        .creator-meta span { color: var(--text-muted); }
+        .creator-showcase > div { border-radius: 6px; overflow: hidden; }
+    </style>
 </head>
-
 <body>
-    <!-- MINIMAL NAVBAR -->
+    <!-- NAVBAR -->
     <nav class="nav">
         <div class="nav-links">
-            <a th:href="@{/colecciones}" href="#">Colecciones</a>
-            <a th:href="@{/creadores}" href="#">Creadores</a>
-            <a th:href="@{/tiendas}" class="active" href="#">Tiendas</a>
+            <a th:href="@{/colecciones}">Colecciones</a>
+            <a th:href="@{/creadores}">Creadores</a>
+            <a th:href="@{/tiendas}" class="active">Tiendas</a>
         </div>
-        <a class="nav-logo" th:href="@{/}" href="#">Baz<span>ar</span>cito</a>
+        <a class="nav-logo" th:href="@{/}">Baz<span>ar</span>cito</a>
         <div class="nav-right">
+            <a th:href="@{/vender}" class="nav-action">Vender</a>
             <span class="nav-action" id="btnSearch">Buscar</span>
-            <a th:href="@{/favoritos}" class="nav-action" style="font-size: 1.2rem; text-decoration: none;" aria-label="Favoritos">🖤</a>
-            <a th:if="${session.user == null}" th:href="@{/login}" class="nav-action">Acceder</a>
-            <a th:if="${session.user != null}" th:href="@{/logout}" class="nav-action" th:text="'Hola, ' + ${session.user} + ' (Salir)'">Salir</a>
+            <a th:href="@{/favoritos}" class="nav-action" style="font-size:1.1rem;text-decoration:none;" aria-label="Favoritos">🤍</a>
+            <a sec:authorize="isAnonymous()" th:href="@{/login}" class="nav-action">Acceder</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/dashboard}" class="nav-action">Mi Cuenta</a>
             <div class="nav-cart" id="btnCart">
                 <span class="nav-action">Bolsa</span>
-                <div style="position: relative;">
+                <div style="position:relative;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-                        <line x1="3" y1="6" x2="21" y2="6" />
-                        <path d="M16 10a4 4 0 0 1-8 0" />
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
                     </svg>
-                    <span id="cartBadge" class="cart-badge" style="display: none;">0</span>
+                    <span id="cartBadge" class="cart-badge" style="display:none;">0</span>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- STORES SECTION -->
-    <section class="creators" style="padding-top: 8rem; min-height: 80vh;">
-        <div class="c-hdr-wrap">
-            <div class="sec-hdr" style="margin-bottom:0">
-                <span class="sec-ey">Nuestros Espacios</span>
-                <h2 class="sec-title">Explora las <em>Tiendas</em></h2>
+    <!-- PAGE HERO -->
+    <div class="page-hero">
+        <div class="page-hero-inner">
+            <div>
+                <span class="sec-ey">Tiendas registradas</span>
+                <h1 class="sec-title">Explora las <em>Tiendas</em></h1>
             </div>
+            <span class="creator-count"
+                  th:text="${creadores != null ? creadores.size() + ' tiendas registradas' : '0 tiendas registradas'}">
+                0 tiendas registradas
+            </span>
         </div>
+    </div>
 
+    <!-- STORES SECTION -->
+    <section class="creators" style="padding-top:3rem; min-height:60vh;">
         <div class="creator-grid">
-            <!-- Thymeleaf loop -->
-            <div class="creator-card" th:each="tienda : ${creadores}">
-                <div class="creator-header">
-                    <div class="creator-avatar"
-                        th:style="${tienda.avatarGradient != null and !tienda.avatarGradient.isEmpty() ? 'background:' + tienda.avatarGradient : ''}"
-                        th:text="${tienda.avatarInitial}">T</div>
-                    <div class="creator-meta">
-                        <h3 th:text="${tienda.name}">Tienda Name</h3>
-                        <span th:text="${tienda.location + ' • ' + tienda.numberOfItems + ' piezas'}">
-                            Ubicación • 42 piezas
-                        </span>
+
+            <!-- ── Loop real de la BD ── -->
+            <th:block th:if="${creadores != null and !creadores.isEmpty()}">
+                <div class="creator-card" th:each="tienda : ${creadores}">
+                    <div class="creator-header">
+                        <div class="creator-avatar"
+                             th:style="${tienda.avatarGradient != null and !tienda.avatarGradient.isEmpty()
+                                        ? 'background:' + tienda.avatarGradient
+                                        : 'background:linear-gradient(135deg,#FFD6BA,#FFB38A)'}"
+                             th:text="${tienda.avatarInitial != null
+                                        ? tienda.avatarInitial
+                                        : (tienda.firstName != null
+                                            ? tienda.firstName.substring(0,1).toUpperCase()
+                                            : tienda.username.substring(0,1).toUpperCase())}">T</div>
+                        <div class="creator-meta">
+                            <h3 th:text="${tienda.firstName != null
+                                           ? tienda.firstName + ' ' + (tienda.lastName != null ? tienda.lastName : '')
+                                           : tienda.username}">Tienda</h3>
+                            <span th:text="${tienda.location != null and !tienda.location.isEmpty() ? tienda.location : 'Sin ubicacion registrada'}">Sin ubicacion registrada</span>
+                        </div>
+                    </div>
+
+                    <div class="creator-showcase">
+                        <div class="cs-main"
+                             th:style="${tienda.mainBg != null ? 'background:' + tienda.mainBg : 'background:#EBCFC0'}"
+                             th:with="p0=${!tienda.products.isEmpty() ? tienda.products[0] : null}">
+                            <img th:if="${p0 != null and p0.image != null and (p0.image.startsWith('http') or p0.image.startsWith('/uploads/'))}"
+                                 th:src="${p0.image}" th:alt="${p0.name}"
+                                 style="width:100%;height:100%;object-fit:cover;">
+                        </div>
+                        <div class="cs-sub1"
+                             th:style="${tienda.sub1Bg != null ? 'background:' + tienda.sub1Bg : 'background:#E8DCCB'}"
+                             th:with="p1=${tienda.products.size() > 1 ? tienda.products[1] : null}">
+                            <img th:if="${p1 != null and p1.image != null and (p1.image.startsWith('http') or p1.image.startsWith('/uploads/'))}"
+                                 th:src="${p1.image}" style="width:100%;height:100%;object-fit:cover;">
+                        </div>
+                        <div class="cs-sub2"
+                             th:style="${tienda.sub2Bg != null ? 'background:' + tienda.sub2Bg : 'background:#DFD0E8'}"
+                             th:with="p2=${tienda.products.size() > 2 ? tienda.products[2] : null}">
+                            <img th:if="${p2 != null and p2.image != null and (p2.image.startsWith('http') or p2.image.startsWith('/uploads/'))}"
+                                 th:src="${p2.image}" style="width:100%;height:100%;object-fit:cover;">
+                        </div>
+                    </div>
+
+                    <div class="creator-footer">
+                        <div class="creator-tags">
+                            <th:block th:if="${!tienda.tags.isEmpty()}">
+                                <span class="c-tag" th:each="tag : ${tienda.tags}" th:text="${tag}">Tag</span>
+                            </th:block>
+                            <span class="product-count-badge"
+                                  th:text="${tienda.products.size()} + ' piezas'">0 piezas</span>
+                        </div>
+                        <a th:href="@{/tienda/{id}(id=${tienda.id})}" class="btn-outline">Ver Tienda</a>
                     </div>
                 </div>
-                <div class="creator-showcase">
-                    <div class="cs-main"
-                        th:style="${tienda.mainBg != null and !tienda.mainBg.isEmpty() ? 'background:' + tienda.mainBg : ''}">
-                    </div>
-                    <div class="cs-sub1"
-                        th:style="${tienda.sub1Bg != null and !tienda.sub1Bg.isEmpty() ? 'background:' + tienda.sub1Bg : ''}">
-                    </div>
-                    <div class="cs-sub2"
-                        th:style="${tienda.sub2Bg != null and !tienda.sub2Bg.isEmpty() ? 'background:' + tienda.sub2Bg : ''}">
-                    </div>
-                </div>
-                <div class="creator-footer">
-                    <div class="creator-tags">
-                        <span class="c-tag" th:each="tag : ${tienda.tags}" th:text="${tag}">Categoría</span>
-                    </div>
-                    <a th:href="@{/tienda/{h}(h=${tienda.handle})}" href="#" class="btn-outline">Ver Catálogo</a>
-                </div>
+            </th:block>
+
+            <!-- ── Empty state ── -->
+            <div th:if="${creadores == null or creadores.isEmpty()}" class="empty-section">
+                <span class="empty-icon">🛍</span>
+                <h3>Aún no hay tiendas</h3>
+                <p>Cuando un vendedor complete su perfil, su tienda aparecera aqui.</p>
+                <a th:href="@{/vender}" class="btn-primary" style="display:inline-flex;text-decoration:none;">
+                    Abrir mi tienda
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
             </div>
+
         </div>
     </section>
 
@@ -84,29 +182,28 @@
     <footer class="footer">
         <div class="f-grid">
             <div>
-                <div class="f-logo">Baz<span>a</span>r</div>
-                <p class="f-desc">Un marketplace editorial para creadores independientes y piezas que importan.</p>
+                <div class="f-logo">Baz<span>ar</span>cito</div>
+                <p class="f-desc">Marketplace editorial para creadores independientes y piezas que importan.</p>
             </div>
             <div class="f-col">
                 <div class="f-col-title">Explorar</div>
                 <ul>
-                    <li><a href="#">The Edit</a></li>
-                    <li><a href="#">Archivos</a></li>
-                    <li><a href="#">Creadores</a></li>
-                    <li><a href="#">Espacios</a></li>
+                    <li><a th:href="@{/colecciones}">Colecciones</a></li>
+                    <li><a th:href="@{/creadores}">Creadores</a></li>
+                    <li><a th:href="@{/tiendas}">Tiendas</a></li>
+                    <li><a th:href="@{/favoritos}">Favoritos</a></li>
                 </ul>
             </div>
-        </div>
-        <div class="f-bot">
-            <span>© 2025 Bazar Editorial.</span>
-            <div class="f-leg">
-                <a href="#">Privacidad</a>
-                <a href="#">Términos</a>
+            <div class="f-col">
+                <div class="f-col-title">Vender</div>
+                <ul>
+                    <li><a th:href="@{/vender}">Abrir tienda</a></li>
+                    <li><a th:href="@{/register}">Registrarse</a></li>
+                </ul>
             </div>
         </div>
     </footer>
 
-    <!-- OVERLAYS AND CART -->
     <div id="searchOverlay" class="search-overlay">
         <div class="search-header">
             <input type="text" id="searchInput" placeholder="Buscar piezas, creadores...">
@@ -114,7 +211,6 @@
         </div>
         <div class="search-results" id="searchResults"></div>
     </div>
-
     <div id="cartDrawer" class="cart-drawer">
         <div class="cart-header">
             <h3>Tu Bolsa</h3>
@@ -128,12 +224,10 @@
                 <span>Total</span>
                 <span id="cartTotalValue">$0</span>
             </div>
-            <a th:href="@{/checkout}" class="btn-primary" style="width: 100%; justify-content: center; text-decoration: none;">Proceder al pago</a>
+            <a th:href="@{/checkout}" class="btn-primary" style="width:100%;justify-content:center;text-decoration:none;">Proceder al pago</a>
         </div>
     </div>
-    
     <div id="drawerOverlay" class="drawer-overlay"></div>
-
     <script th:src="@{/js/app.js}"></script>
 </body>
 </html>
