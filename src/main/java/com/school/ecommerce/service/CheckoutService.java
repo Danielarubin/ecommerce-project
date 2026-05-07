@@ -31,12 +31,12 @@ public class CheckoutService {
     }
 
     @Transactional
-    public void processCheckout(List<CartItemDto> cartItems, String username) {
+    public void processCheckout(List<CartItemDto> cartItems, String email) {
         if (cartItems == null || cartItems.isEmpty()) {
             throw new IllegalArgumentException("El carrito está vacío");
         }
 
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("Usuario no encontrado en la base de datos"));
 
         PurchaseOrder order = new PurchaseOrder();
