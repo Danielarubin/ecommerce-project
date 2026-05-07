@@ -1,16 +1,24 @@
 package com.school.ecommerce.controller;
 
 import com.school.ecommerce.dto.CartItemDto;
+import com.school.ecommerce.service.CheckoutService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
 @Controller
 public class CheckoutController {
+
+    private final CheckoutService checkoutService;
+
+    public CheckoutController(CheckoutService checkoutService) {
+        this.checkoutService = checkoutService;
+    }
 
     @SuppressWarnings("unchecked")
     @GetMapping("/checkout")
@@ -31,12 +39,29 @@ public class CheckoutController {
         return "checkout";
     }
 
+    @SuppressWarnings("unchecked")
     @PostMapping("/checkout")
-    public String processCheckout(HttpSession session) {
-        // Here we would typically save the order to the database
-        // For now, we just clear the cart and show success page
-        session.removeAttribute("cart");
-        return "redirect:/success";
+    public String processCheckout(HttpSession session, RedirectAttributes redirectAttributes) {
+        String username = (String) session.getAttribute("user");
+        if (username == null) {
+            return "redirect:/login"; // Must be logged in to checkout
+        }
+
+        List<CartItemDto> cart = (List<CartItemDto>) session.getAttribute("cart");
+        if (cart == null || cart.isEmpty()) {
+            return "redirect:/";
+        }
+
+        try {
+            checkoutService.processCheckout(cart, username);
+            // Si tiene éxito, vaciamos el carrito y redirigimos al éxito
+            session.removeAttribute("cart");
+            return "redirect:/success";
+        } catch (Exception e) {
+            // Si hay error (ej. falta de stock), pasamos el mensaje de error y redirigimos
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/checkout";
+        }
     }
 
     @GetMapping("/success")
