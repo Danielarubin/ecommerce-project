@@ -14,6 +14,86 @@ document.addEventListener('DOMContentLoaded', () => {
     const cartEmpty = document.getElementById('cartEmpty');
     const cartBadge = document.getElementById('cartBadge');
 
+    // === CONFIRMACIONES GLOBALES ===
+    function ensureConfirmDialog() {
+        let backdrop = document.getElementById('appConfirmBackdrop');
+        if (backdrop) return backdrop;
+
+        backdrop = document.createElement('div');
+        backdrop.id = 'appConfirmBackdrop';
+        backdrop.className = 'app-confirm-backdrop';
+        backdrop.innerHTML = `
+            <div class="app-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="appConfirmTitle">
+                <div class="app-confirm-kicker">Confirmacion</div>
+                <h2 class="app-confirm-title" id="appConfirmTitle">Confirmar accion</h2>
+                <p class="app-confirm-message" id="appConfirmMessage"></p>
+                <div class="app-confirm-actions">
+                    <button type="button" class="app-confirm-btn cancel" id="appConfirmCancel">Cancelar</button>
+                    <button type="button" class="app-confirm-btn confirm danger" id="appConfirmAccept">Confirmar</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(backdrop);
+        return backdrop;
+    }
+
+    function openConfirm({ title, message, confirmText, danger }) {
+        return new Promise(resolve => {
+            const backdrop = ensureConfirmDialog();
+            const titleEl = backdrop.querySelector('#appConfirmTitle');
+            const messageEl = backdrop.querySelector('#appConfirmMessage');
+            const cancelBtn = backdrop.querySelector('#appConfirmCancel');
+            const acceptBtn = backdrop.querySelector('#appConfirmAccept');
+
+            titleEl.textContent = title || 'Confirmar accion';
+            messageEl.textContent = message || 'Esta accion no se puede deshacer.';
+            acceptBtn.textContent = confirmText || 'Confirmar';
+            acceptBtn.classList.toggle('danger', danger !== false);
+
+            const close = value => {
+                backdrop.classList.remove('active');
+                document.removeEventListener('keydown', onKeydown);
+                cancelBtn.removeEventListener('click', onCancel);
+                acceptBtn.removeEventListener('click', onAccept);
+                backdrop.removeEventListener('click', onBackdrop);
+                resolve(value);
+            };
+
+            const onCancel = () => close(false);
+            const onAccept = () => close(true);
+            const onBackdrop = event => {
+                if (event.target === backdrop) close(false);
+            };
+            const onKeydown = event => {
+                if (event.key === 'Escape') close(false);
+            };
+
+            cancelBtn.addEventListener('click', onCancel);
+            acceptBtn.addEventListener('click', onAccept);
+            backdrop.addEventListener('click', onBackdrop);
+            document.addEventListener('keydown', onKeydown);
+
+            backdrop.classList.add('active');
+            cancelBtn.focus();
+        });
+    }
+
+    document.querySelectorAll('form[data-confirm]').forEach(form => {
+        form.addEventListener('submit', async event => {
+            if (form.dataset.confirmed === 'true') return;
+            event.preventDefault();
+            const ok = await openConfirm({
+                title: form.dataset.confirmTitle,
+                message: form.dataset.confirm,
+                confirmText: form.dataset.confirmText || 'Eliminar',
+                danger: form.dataset.confirmDanger !== 'false'
+            });
+            if (!ok) return;
+            form.dataset.confirmed = 'true';
+            form.submit();
+        });
+    });
+
     // === INICIALIZACIÓN DE DATOS DEL BACKEND ===
     async function loadInitialData() {
         try {
@@ -60,12 +140,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // === LÓGICA DE FAVORITOS (BACKEND) ===
     function initializeFavorites() {
-        document.querySelectorAll('.product-card').forEach(card => {
+        document.querySelectorAll('.product-card, .product-card-dynamic').forEach(card => {
             const id = card.dataset.id;
             const btnFav = card.querySelector('.btn-fav');
             if (!btnFav) return;
             
-            if (favorites.includes(id)) {
+            if (favorites.map(String).includes(String(id))) {
                 btnFav.textContent = '🖤';
                 btnFav.classList.add('active');
             }
@@ -76,18 +156,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             newBtnFav.addEventListener('click', async (e) => {
                 e.preventDefault();
-                e.stopPropagation(); 
-                
-                // Optimistic UI update
+                e.stopPropagation();
+                if (!id || id === '0') return;
                 const isActive = newBtnFav.classList.contains('active');
                 if (isActive) {
                     newBtnFav.textContent = '🤍';
                     newBtnFav.classList.remove('active');
+                    if (window.showToast) window.showToast('Eliminado de favoritos', '');
                 } else {
                     newBtnFav.textContent = '🖤';
                     newBtnFav.classList.add('active');
+                    if (window.showToast) window.showToast('¡Añadido a favoritos! 🖤', 'accent');
                 }
-
                 try {
                     const formData = new URLSearchParams();
                     formData.append('id', id);
@@ -96,19 +176,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         body: formData.toString()
                     });
-                    if (res.ok) {
-                        favorites = await res.json();
-                    }
-                } catch (err) {
-                    console.error("Error toggling favorite", err);
-                    // Revert on error
-                }
+                    if (res.ok) favorites = await res.json();
+                } catch (err) { console.error('Error toggling favorite', err); }
             });
         });
     }
 
     // === LÓGICA DE CARRITO (BACKEND) ===
-    document.querySelectorAll('.product-card').forEach(card => {
+    document.querySelectorAll('.product-card, .product-card-dynamic').forEach(card => {
         const btnAdd = card.querySelector('.btn-add-cart');
         if (!btnAdd) return;
 
@@ -120,8 +195,20 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             e.stopPropagation(); 
             
+            const cardId = card.dataset.id;
+            const status = card.dataset.status || 'AVAILABLE';
+            // No permitir añadir al carrito sin ID real del backend
+            if (!cardId || cardId === '0') {
+                console.warn('Producto sin ID válido, no se puede añadir al carrito');
+                return;
+            }
+            if (status !== 'AVAILABLE') {
+                if (window.showToast) window.showToast('Esta pieza no esta disponible para compra', '');
+                return;
+            }
+            
             const product = {
-                id: card.dataset.id,
+                id: cardId,
                 name: card.dataset.name,
                 brand: card.dataset.brand,
                 price: parseFloat(card.dataset.price.replace(/[$,]/g, '')),
@@ -129,14 +216,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 qty: 1
             };
             
-            toggleDrawer(cartDrawer, true); 
+            toggleDrawer(cartDrawer, true);
             await addToCart(product);
+            if (window.showToast) window.showToast('Añadido a tu bolsa 🛍', '');
         });
     });
 
     async function addToCart(product) {
         // Optimistic update
-        const existing = cart.find(item => item.id === product.id);
+        const existing = cart.find(item => String(item.id) === String(product.id));
         if (existing) {
             existing.qty += 1;
         } else {
@@ -205,11 +293,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const el = document.createElement('div');
                 el.className = 'cart-item';
+                const hasRemoteImage = item.image && (item.image.startsWith('http') || item.image.startsWith('/uploads/'));
                 el.innerHTML = `
-                    <img src="/images/${item.image}" alt="${item.name}">
+                    ${hasRemoteImage ? `<img src="${item.image}" alt="${item.name}">` : ''}
                     <div class="cart-item-info">
                         <h4>${item.name}</h4>
                         <p>${item.brand}</p>
+                        ${item.selectedSize ? `<p>Talla: ${item.selectedSize}</p>` : ''}
                         <div class="cart-item-price">$${item.price.toLocaleString('es-MX')}</div>
                         <div class="cart-item-qty">
                             <button onclick="updateQty(${index}, -1)">-</button>

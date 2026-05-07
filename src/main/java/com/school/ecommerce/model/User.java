@@ -30,7 +30,6 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private Role role;
 
@@ -60,6 +59,9 @@ public class User {
     // Relationships
     @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Product> products = new ArrayList<>();
+
+    @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ProductCollection> collections = new ArrayList<>();
 
     @OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PurchaseOrder> orders = new ArrayList<>();
@@ -99,6 +101,8 @@ public class User {
     public void setTags(List<String> tags) { this.tags = tags; }
     public List<Product> getProducts() { return products; }
     public void setProducts(List<Product> products) { this.products = products; }
+    public List<ProductCollection> getCollections() { return collections; }
+    public void setCollections(List<ProductCollection> collections) { this.collections = collections; }
     public List<PurchaseOrder> getOrders() { return orders; }
     public void setOrders(List<PurchaseOrder> orders) { this.orders = orders; }
 }

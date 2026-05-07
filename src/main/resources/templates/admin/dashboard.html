@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Bazarcito</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <style>
+        body { background:#F5F0E7; }
+        .admin-shell { max-width:1180px; margin:0 auto; padding:6.5rem 2rem 5rem; }
+        .admin-hero {
+            background:linear-gradient(120deg,rgba(255,179,138,.18),rgba(255,255,255,0) 44%), var(--bg-primary);
+            border:1px solid var(--border-color); border-radius:8px; padding:2rem; margin-bottom:1.25rem;
+            display:flex; align-items:flex-end; justify-content:space-between; gap:1rem; flex-wrap:wrap;
+        }
+        .admin-kicker { font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; color:var(--text-muted); }
+        .admin-title { font-family:var(--font-serif); font-size:clamp(2.4rem,6vw,4.8rem); line-height:.95; margin:.6rem 0 0; }
+        .admin-actions { display:flex; gap:.75rem; flex-wrap:wrap; }
+        .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1rem; }
+        .stat-card, .panel {
+            background:var(--bg-primary); border:1px solid var(--border-color); border-radius:8px; padding:1.25rem;
+        }
+        .stat-card strong { display:block; font-family:var(--font-serif); font-size:2.4rem; line-height:1; }
+        .stat-card span { display:block; color:var(--text-muted); margin-top:.5rem; font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; }
+        .admin-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+        .panel h2 { font-family:var(--font-serif); font-size:1.45rem; margin-bottom:1rem; }
+        .row { border-top:1px solid var(--border-color); padding:.85rem 0; display:flex; justify-content:space-between; gap:1rem; align-items:center; }
+        .row:first-of-type { border-top:0; }
+        .muted { color:var(--text-muted); font-size:.85rem; }
+        @media (max-width:800px) { .stats, .admin-grid { grid-template-columns:1fr; } }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-links">
+            <a th:href="@{/admin}">Admin</a>
+            <a th:href="@{/admin/creadores}">Creadores</a>
+            <a th:href="@{/admin/prendas}">Prendas</a>
+        </div>
+        <a class="nav-logo" th:href="@{/}">Baz<span>ar</span>cito</a>
+        <div class="nav-right">
+            <a th:href="@{/dashboard}" class="nav-action">Mi cuenta</a>
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" class="nav-action" style="background:none;border:none;cursor:pointer;">Cerrar sesion</button>
+            </form>
+        </div>
+    </nav>
+
+    <main class="admin-shell">
+        <section class="admin-hero">
+            <div>
+                <div class="admin-kicker">Panel administrativo</div>
+                <h1 class="admin-title">Control de plataforma</h1>
+            </div>
+            <div class="admin-actions">
+                <a th:href="@{/admin/creadores}" class="btn-outline">Gestionar creadores</a>
+                <a th:href="@{/admin/prendas}" class="btn-primary">Gestionar prendas</a>
+            </div>
+        </section>
+
+        <section class="stats">
+            <div class="stat-card"><strong th:text="${userCount}">0</strong><span>Usuarios</span></div>
+            <div class="stat-card"><strong th:text="${sellerCount}">0</strong><span>Tiendas / creadores</span></div>
+            <div class="stat-card"><strong th:text="${productCount}">0</strong><span>Prendas</span></div>
+        </section>
+
+        <section class="admin-grid">
+            <div class="panel">
+                <h2>Prendas recientes</h2>
+                <div th:if="${#lists.isEmpty(recentProducts)}" class="muted">No hay prendas registradas.</div>
+                <div class="row" th:each="product, iter : ${recentProducts}" th:if="${iter.index < 5}">
+                    <div>
+                        <strong th:text="${product.name}">Prenda</strong>
+                        <div class="muted" th:text="${product.seller != null ? product.seller.username : 'Sin tienda visible'}">Tienda</div>
+                    </div>
+                    <a class="btn-link" th:href="@{/admin/prendas/{id}/editar(id=${product.id})}">Editar</a>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Tiendas recientes</h2>
+                <div th:if="${#lists.isEmpty(recentSellers)}" class="muted">No hay tiendas registradas.</div>
+                <div class="row" th:each="seller, iter : ${recentSellers}" th:if="${iter.index < 5}">
+                    <div>
+                        <strong th:text="${seller.username}">Tienda</strong>
+                        <div class="muted" th:text="${seller.email}">correo</div>
+                    </div>
+                    <a class="btn-link" th:href="@{/admin/creadores/{id}/editar(id=${seller.id})}">Editar</a>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

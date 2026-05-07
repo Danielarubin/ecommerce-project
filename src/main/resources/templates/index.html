@@ -1,83 +1,377 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bazar - Editorial Fashion</title>
-    <link rel="stylesheet" th:href="@{/css/index.css}" href="index.css">
+    <meta name="description" content="Bazarcito — Marketplace editorial de moda independiente. Piezas únicas de creadores mexicanos.">
+    <title>Bazarcito — Moda independiente y piezas únicas</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <style>
+        body {
+            background: #F5F0E7;
+        }
+
+        .subnav {
+            background: #FFFDF9;
+            box-shadow: inset 0 -1px 0 rgba(42,33,24,0.04);
+        }
+
+        .hero-wrapper {
+            padding: 3.5rem clamp(1.25rem, 4vw, 4.5rem) 5rem;
+            background:
+                linear-gradient(140deg, rgba(255,179,138,0.18), rgba(255,255,255,0) 38%),
+                #FFFDF9;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero {
+            max-width: 1440px;
+            margin: 0 auto;
+            gap: clamp(2rem, 4vw, 4rem);
+            grid-template-columns: minmax(430px, 0.95fr) minmax(560px, 1.05fr);
+        }
+
+        .hero-title {
+            max-width: 660px;
+            font-size: clamp(3.4rem, 5.4vw, 5.4rem);
+            line-height: 0.96;
+            overflow-wrap: normal;
+        }
+
+        .hero-title em {
+            margin-left: 0.9rem;
+        }
+
+        .hero-desc {
+            max-width: 430px;
+            font-size: 1rem;
+        }
+
+        .hero-images > div {
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background:
+                linear-gradient(135deg, rgba(255,179,138,0.18), rgba(42,33,24,0.04)),
+                #EEE4D6;
+            box-shadow: 0 18px 45px rgba(42,33,24,0.08);
+        }
+
+        .hero-empty {
+            height: 100%;
+            display: grid;
+            place-items: center;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        /* ── HERO STATS ──────────────────────────────────── */
+        .hero-stats {
+            display: flex;
+            gap: 2.5rem;
+            margin-top: 2rem;
+            margin-left: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+        .stat { display: flex; flex-direction: column; }
+        .stat-num {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 0.65rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+
+        /* ── PRODUCT GRID DINÁMICO ───────────────────────── */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+        .product-card-dynamic {
+            cursor: pointer;
+            position: relative;
+            background: #FFFDF9;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .product-card-dynamic:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 32px rgba(42,33,24,0.08);
+        }
+        .product-card-dynamic .e-img {
+            height: auto;
+            aspect-ratio: 4 / 5;
+            overflow: hidden;
+            border-radius: 6px;
+            background: var(--bg-secondary);
+            position: relative;
+        }
+        .product-card-dynamic .e-img img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.2,0.8,0.2,1);
+        }
+        .product-card-dynamic:hover .e-img img { transform: scale(1.05); }
+        .product-card-dynamic:hover .btn-fav,
+        .product-card-dynamic:hover .btn-add-cart { opacity: 1; transform: translateY(0) translateX(-50%); }
+        .product-card-dynamic:hover .btn-fav { transform: translateY(0); }
+        .badge-new {
+            position: absolute; top: 1rem; left: 1rem;
+            background: var(--text-dark); color: var(--bg-primary);
+            font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+            padding: 0.25rem 0.6rem; border-radius: 2px; z-index: 5;
+        }
+        .product-card-dynamic .e-info {
+            padding: 0.2rem 0.1rem 0.1rem;
+        }
+
+        /* ── TOAST NOTIFICATION ──────────────────────────── */
+        .toast-container {
+            position: fixed; bottom: 2rem; left: 50%;
+            transform: translateX(-50%);
+            z-index: 999; display: flex; flex-direction: column;
+            gap: 0.75rem; align-items: center; pointer-events: none;
+        }
+        .toast {
+            background: var(--text-dark); color: var(--bg-primary);
+            padding: 0.9rem 1.8rem; border-radius: 100px;
+            font-size: 0.85rem; font-weight: 400;
+            box-shadow: 0 8px 24px rgba(42,33,24,0.2);
+            opacity: 0; transform: translateY(20px);
+            transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+            pointer-events: auto;
+            display: flex; align-items: center; gap: 0.6rem;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.accent { background: var(--accent-color); color: white; }
+
+        /* ── SECTION DIVIDER ─────────────────────────────── */
+        .section-divider {
+            display: flex; align-items: center; gap: 2rem;
+            padding: 0 2.5rem; margin: 4rem 0 0;
+        }
+        .section-divider::before, .section-divider::after {
+            content: ''; flex: 1; height: 1px; background: var(--border-color);
+        }
+        .section-divider span {
+            font-size: 0.65rem; letter-spacing: 0.15em;
+            text-transform: uppercase; color: var(--text-muted); white-space: nowrap;
+        }
+
+        /* ── CTA BANNER ──────────────────────────────────── */
+        .cta-banner {
+            max-width: none;
+            width: 100%;
+            margin: 5rem 0;
+            background: var(--text-dark);
+            border-radius: 0;
+            padding: 4.5rem clamp(2rem, 8vw, 7rem);
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            gap: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-banner::before {
+            content: 'VENDE';
+            position: absolute; right: 0; top: 50%;
+            transform: translateY(-50%);
+            font-family: var(--font-serif);
+            font-size: 12rem; font-weight: 800; letter-spacing: -0.05em;
+            color: rgba(255,255,255,0.04);
+            pointer-events: none; white-space: nowrap;
+            line-height: 1;
+        }
+        .cta-banner-title {
+            font-family: var(--font-serif);
+            font-size: 2.8rem; font-weight: 700; line-height: 1.15;
+            color: var(--bg-primary); letter-spacing: -0.03em;
+        }
+        .cta-banner-title em { color: var(--accent-color); font-style: normal; }
+        .cta-banner-sub {
+            font-size: 0.9rem; color: rgba(253,250,246,0.6);
+            margin-top: 0.75rem; max-width: 400px; line-height: 1.6;
+        }
+        .btn-primary-light {
+            display: inline-flex; align-items: center; gap: 0.6rem;
+            padding: 1rem 2rem;
+            background: var(--bg-primary); color: var(--text-dark);
+            font-size: 0.75rem; letter-spacing: 0.1em;
+            text-transform: uppercase; font-weight: 500;
+            border-radius: 2px; white-space: nowrap;
+            transition: transform 0.3s ease, background 0.3s ease;
+            position: relative; z-index: 1;
+        }
+        .btn-primary-light:hover { transform: translateY(-2px); background: var(--accent-color); color: white; }
+
+        /* ── CREATORS REAL ───────────────────────────────── */
+        .creator-card-real {
+            background: var(--bg-primary);
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+        }
+        .creator-card-real:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px rgba(42,33,24,0.08);
+        }
+        .creator-first-product {
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
+            border-radius: 6px;
+            margin-bottom: 1.25rem;
+            background: var(--bg-secondary);
+        }
+        .creator-first-product img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+        .creator-card-real:hover .creator-first-product img { transform: scale(1.05); }
+        .creator-card-real .creator-header {
+            padding: 0 0.35rem;
+        }
+        .creator-card-real .creator-footer {
+            margin-top: auto;
+            padding: 1rem 0.35rem 0.15rem;
+        }
+        .featured,
+        .creators,
+        .about-section {
+            position: relative;
+        }
+        .featured > *,
+        .creators > *,
+        .about-section > * {
+            max-width: 1440px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* empty state */
+        .empty-state {
+            grid-column: 1/-1; text-align: center;
+            padding: 5rem 2rem; color: var(--text-muted);
+        }
+        .empty-state h3 { font-family: var(--font-serif); font-size: 2rem; margin-bottom: 1rem; color: var(--text-dark); }
+
+        @media(max-width: 768px) {
+            .hero-wrapper { padding: 2rem 1rem 3rem; }
+            .hero { grid-template-columns: 1fr; }
+            .hero-desc, .hero-actions, .hero-stats { margin-left: 0; }
+            .cta-banner { grid-template-columns: 1fr; padding: 3rem 1.25rem; margin: 3rem 0; }
+            .cta-banner-title { font-size: 2rem; }
+            .hero-stats { flex-wrap: wrap; gap: 1.5rem; }
+            .featured, .creators { padding-left: 1rem; padding-right: 1rem; }
+        }
+    </style>
 </head>
 
 <body>
 
-    <!-- NAVBAR -->
+    <!-- ══ TOAST CONTAINER ══ -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ══ NAVBAR ══ -->
     <nav class="nav">
         <div class="nav-links">
-            <a th:href="@{/colecciones}" href="#">Colecciones</a>
-            <a th:href="@{/creadores}" href="#">Creadores</a>
-            <a th:href="@{/tiendas}" href="#">Tiendas</a>
+            <a th:href="@{/colecciones}">Colecciones</a>
+            <a th:href="@{/creadores}">Creadores</a>
+            <a th:href="@{/tiendas}">Tiendas</a>
         </div>
-        <a class="nav-logo" th:href="@{/}" href="#">Baz<span>ar</span>cito</a>
+        <a class="nav-logo" th:href="@{/}">Baz<span>ar</span>cito</a>
         <div class="nav-right">
-            <span class="nav-action" id="btnSearch">Buscar</span>
-            <a th:if="${session.user == null}" th:href="@{/login}" class="nav-action">Acceder</a>
-            <a th:if="${session.user != null}" th:href="@{/logout}" class="nav-action" th:text="'Hola, ' + ${session.user} + ' (Salir)'">Salir</a>
-            <div class="nav-cart" id="btnCart">
+            <a th:href="@{/vender}" class="nav-action">Vender</a>
+            <span class="nav-action" id="btnSearch" role="button" aria-label="Buscar">Buscar</span>
+            <a th:href="@{/favoritos}" class="nav-action" style="font-size:1.1rem;text-decoration:none;" aria-label="Favoritos">🤍</a>
+            <a sec:authorize="isAnonymous()" th:href="@{/login}" class="nav-action">Acceder</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/dashboard}" class="nav-action">
+                Mi Cuenta
+            </a>
+            <div class="nav-cart" id="btnCart" role="button" aria-label="Carrito">
                 <span class="nav-action">Bolsa</span>
-                <div style="position: relative;">
+                <div style="position:relative;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-                        <line x1="3" y1="6" x2="21" y2="6" />
-                        <path d="M16 10a4 4 0 0 1-8 0" />
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
                     </svg>
-                    <span id="cartBadge" class="cart-badge" style="display: none;">0</span>
+                    <span id="cartBadge" class="cart-badge" style="display:none;">0</span>
                 </div>
-            </div>
-        </div>
-                    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-                    <line x1="3" y1="6" x2="21" y2="6" />
-                    <path d="M16 10a4 4 0 0 1-8 0" />
-                </svg>
             </div>
         </div>
     </nav>
 
-    <!-- SUBNAV -->
+    <!-- ══ SUBNAV ══ -->
     <div class="subnav">
-        <a href="#">Tendencias</a>
-        <a href="#">Vintage</a>
-        <a href="#">Streetwear</a>
-        <a href="#">Más vendidos</a>
-        <a href="#">Recomendaciones</a>
+        <a th:href="@{/colecciones}">Tendencias</a>
+        <a th:href="@{/colecciones}">Vintage</a>
+        <a th:href="@{/colecciones}">Streetwear</a>
+        <a th:href="@{/colecciones}" class="hot">Más vendidos ✦</a>
+        <a th:href="@{/colecciones}">Recomendaciones</a>
     </div>
 
-    <!-- HERO -->
+    <!-- ══ HERO ══ -->
     <div class="hero-wrapper">
         <section class="hero">
             <div class="hero-text">
                 <h1 class="hero-title">Estilo con<br><em>intención.</em></h1>
-                <p class="hero-desc">Explora una selección de piezas únicas creadas por diseñadores, la verdadera
-                    exclusividad está en las historias que vistes.</p>
+                <p class="hero-desc">Explora piezas únicas de creadores independientes. Cada compra apoya a diseñadores reales.</p>
                 <div class="hero-actions">
-                    <a th:href="@{/colecciones}" href="#" class="btn-primary">Ver Colección</a>
-                    <a th:href="@{/creadores}" href="#" class="btn-link">Conocer Creadores</a>
+                    <a th:href="@{/colecciones}" class="btn-primary">Ver Colección</a>
+                    <a th:href="@{/creadores}" class="btn-link">Conocer Creadores</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-num" th:text="${productos != null ? productos.size() : '0'}">0</span>
+                        <span class="stat-label">Piezas disponibles</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-num" th:text="${creadores != null ? creadores.size() : '0'}">0</span>
+                        <span class="stat-label">Creadores activos</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-num">MX</span>
+                        <span class="stat-label">Envíos nacionales</span>
+                    </div>
                 </div>
             </div>
-            <div class="hero-images">
+            <div class="hero-images" th:with="p0=${productos != null and productos.size() > 0 ? productos[0] : null}, p1=${productos != null and productos.size() > 1 ? productos[1] : null}, p2=${productos != null and productos.size() > 2 ? productos[2] : null}">
                 <div class="h-img-1">
-                    <img class="ph-img" th:src="@{/images/gorras.jpg}" src="gorras.jpg" alt="gorras">
+                    <img th:if="${p0 != null and p0.image != null and (p0.image.startsWith('http') or p0.image.startsWith('/uploads/'))}" th:src="${p0.image}" th:alt="${p0.name}">
+                    <div class="hero-empty" th:if="${p0 == null or p0.image == null or !(p0.image.startsWith('http') or p0.image.startsWith('/uploads/'))}">Próximamente</div>
                 </div>
                 <div class="h-img-2">
-                    <img class="ph-img" th:src="@{/images/chaquetaroja.jpg}" src="chaquetaroja.jpg" alt="chaquetaroja">
+                    <img th:if="${p1 != null and p1.image != null and (p1.image.startsWith('http') or p1.image.startsWith('/uploads/'))}" th:src="${p1.image}" th:alt="${p1.name}">
+                    <div class="hero-empty" th:if="${p1 == null or p1.image == null or !(p1.image.startsWith('http') or p1.image.startsWith('/uploads/'))}">Próximamente</div>
                 </div>
                 <div class="h-img-3">
-                    <img class="ph-img" th:src="@{/images/blusita.jpg}" src="blusita.jpg" alt="blusita">
+                    <img th:if="${p2 != null and p2.image != null and (p2.image.startsWith('http') or p2.image.startsWith('/uploads/'))}" th:src="${p2.image}" th:alt="${p2.name}">
+                    <div class="hero-empty" th:if="${p2 == null or p2.image == null or !(p2.image.startsWith('http') or p2.image.startsWith('/uploads/'))}">Próximamente</div>
                 </div>
             </div>
         </section>
     </div>
 
-    <!-- MARQUEE -->
+    <!-- ══ MARQUEE ══ -->
     <div class="marquee" aria-hidden="true">
         <div class="m-track">
             <span>Envíos a todo México</span><span class="dot">•</span>
@@ -93,419 +387,250 @@
         </div>
     </div>
 
-    <!-- ═══════════════════════════════════════════
-         FEATURED PRODUCTS — EDITORIAL BROKEN GRID
-         Fila 1: 5 cards en posiciones asimétricas
-         Fila 2: 4 cards uniformes
-    ════════════════════════════════════════════ -->
+    <!-- ══ PRODUCTOS — Loop dinámico del backend ══ -->
     <section class="featured">
-        <div class="sec-hdr">
-            <span class="sec-ey">The Edit</span>
-            <h2 class="sec-title">Nuevas <em>Adquisiciones</em></h2>
+        <div class="sec-hdr" style="display:flex;justify-content:space-between;align-items:flex-end;flex-direction:row;">
+            <div>
+                <span class="sec-ey">The Edit</span>
+                <h2 class="sec-title">Nuevas <em>Adquisiciones</em></h2>
+            </div>
+            <a th:href="@{/colecciones}" class="btn-link" style="margin-bottom:0.5rem;">Ver todo el catálogo →</a>
         </div>
 
-        <!-- FILA 1 — grid editorial asimétrico, 5 cards -->
-        <div class="editorial-grid">
-
-            <!-- Card 1: col 1-5, push-top -->
-            <div class="e-card e-card--1 product-card" 
-                 data-id="prod-1" 
-                 th:data-name="${productos != null and productos.size() > 0 ? productos[0].name : 'Blazer Overcut'}"
-                 th:data-brand="${productos != null and productos.size() > 0 ? productos[0].brand : 'Nude Studio'}"
-                 th:data-price="${productos != null and productos.size() > 0 ? productos[0].price : '$2,400'}"
-                 data-image="lentejuelas.jpg">
+        <!-- Grid dinámico cuando hay productos en BD -->
+        <div class="products-grid" th:if="${productos != null and !productos.isEmpty()}">
+            <div th:each="prod, iterStat : ${productos}"
+                 th:if="${iterStat.index < 8}"
+                 class="product-card-dynamic product-card"
+                 th:data-id="${prod.id}"
+                 th:data-name="${prod.name}"
+                 th:data-brand="${prod.brand}"
+                 th:data-price="${prod.price}"
+                 th:data-image="${prod.image}"
+                 th:data-status="${prod.status}"
+                 th:onclick="|window.location.href='@{/product/{id}(id=${prod.id})}'|">
                 <div class="e-img">
-                    <img th:src="@{/images/lentejuelas.jpg}" src="lentejuelas.jpg" alt="Blazer lentejuelas">
+                    <span class="badge-new" th:if="${iterStat.index < 2}">Nuevo</span>
+                    <!-- Solo se muestran imagenes remotas guardadas en BD -->
+                    <img th:if="${prod.image != null and (prod.image.startsWith('http') or prod.image.startsWith('/uploads/'))}"
+                         th:src="${prod.image}" th:alt="${prod.name}">
                     <button class="btn-fav" aria-label="Agregar a favoritos">🤍</button>
                     <button class="btn-add-cart">Añadir a bolsa</button>
                 </div>
                 <div class="e-info">
                     <div>
-                        <div class="e-brand"
-                            th:text="${productos != null and productos.size() > 0 ? productos[0].brand : 'Nude Studio'}">
-                            Nude Studio</div>
-                        <div class="e-name"
-                            th:text="${productos != null and productos.size() > 0 ? productos[0].name : 'Blazer Overcut'}">
-                            Blazer Overcut</div>
+                        <div class="e-brand" th:text="${prod.brand}">Marca</div>
+                        <div class="e-name" th:text="${prod.name}">Nombre</div>
                     </div>
-                    <div class="e-price"
-                        th:text="${productos != null and productos.size() > 0 ? productos[0].price : '$2,400'}">$2,400
-                    </div>
+                    <div class="e-price" th:text="'$' + ${#numbers.formatDecimal(prod.price,1,'COMMA',0,'POINT')}">$0</div>
                 </div>
             </div>
+        </div>
 
-            <!-- Card 2: col 5-9, card grande central (hero) -->
-            <div class="e-card e-card--2 product-card"
-                 data-id="prod-2"
-                 th:data-name="${productos != null and productos.size() > 1 ? productos[1].name : 'Faldas Colección'}"
-                 th:data-brand="${productos != null and productos.size() > 1 ? productos[1].brand : 'VNTG Archive'}"
-                 th:data-price="${productos != null and productos.size() > 1 ? productos[1].price : '$1,850'}"
-                 data-image="faldasvarias.jpg">
-                <div class="e-img">
-                    <img th:src="@{/images/faldasvarias.jpg}" src="faldasvarias.jpg" alt="Faldas colección">
-                    <button class="btn-fav" aria-label="Agregar a favoritos">🤍</button>
-                    <button class="btn-add-cart">Añadir a bolsa</button>
-                </div>
-                <div class="e-info">
-                    <div>
-                        <div class="e-brand"
-                            th:text="${productos != null and productos.size() > 1 ? productos[1].brand : 'VNTG Archive'}">
-                            VNTG Archive</div>
-                        <div class="e-name"
-                            th:text="${productos != null and productos.size() > 1 ? productos[1].name : 'Faldas Colección'}">
-                            Faldas Colección</div>
-                    </div>
-                    <div class="e-price"
-                        th:text="${productos != null and productos.size() > 1 ? productos[1].price : '$1,850'}">$1,850
-                    </div>
-                </div>
+        <!-- Empty state cuando BD está vacía -->
+        <div class="products-grid" th:if="${productos == null or productos.isEmpty()}">
+            <div class="empty-state">
+                <h3>¡Pronto habrá piezas!</h3>
+                <p>Sé el primero en vender en Bazarcito.</p>
+                <a th:href="@{/vender}" class="btn-primary" style="margin-top:2rem;display:inline-flex;">Comenzar a vender</a>
             </div>
-
-            <!-- Card 3: col 9-13, push-abajo -->
-            <div class="e-card e-card--3 product-card"
-                 data-id="prod-3"
-                 th:data-name="${productos != null and productos.size() > 2 ? productos[2].name : 'Denim Editado'}"
-                 th:data-brand="${productos != null and productos.size() > 2 ? productos[2].brand : 'Maison O'}"
-                 th:data-price="${productos != null and productos.size() > 2 ? productos[2].price : '$1,200'}"
-                 data-image="cooljeans.jpg">
-                <div class="e-img">
-                    <img th:src="@{/images/cooljeans.jpg}" src="cooljeans.jpg" alt="Cool Jeans">
-                    <button class="btn-fav" aria-label="Agregar a favoritos">🤍</button>
-                    <button class="btn-add-cart">Añadir a bolsa</button>
-                </div>
-                <div class="e-info">
-                    <div>
-                        <div class="e-brand"
-                            th:text="${productos != null and productos.size() > 2 ? productos[2].brand : 'Maison O'}">
-                            Maison O</div>
-                        <div class="e-name"
-                            th:text="${productos != null and productos.size() > 2 ? productos[2].name : 'Denim Editado'}">
-                            Denim Editado</div>
-                    </div>
-                    <div class="e-price"
-                        th:text="${productos != null and productos.size() > 2 ? productos[2].price : '$1,200'}">$1,200
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 4: col 1-6, row 2 -->
-            <div class="e-card e-card--4 product-card"
-                 data-id="prod-4"
-                 th:data-name="${productos != null and productos.size() > 3 ? productos[3].name : 'Pulseras Artesanales'}"
-                 th:data-brand="${productos != null and productos.size() > 3 ? productos[3].brand : 'Orígenes'}"
-                 th:data-price="${productos != null and productos.size() > 3 ? productos[3].price : '$680'}"
-                 data-image="maspulseras.jpg">
-                <div class="e-img">
-                    <img th:src="@{/images/maspulseras.jpg}" src="maspulseras.jpg" alt="Pulseras artesanales">
-                    <button class="btn-fav" aria-label="Agregar a favoritos">🤍</button>
-                    <button class="btn-add-cart">Añadir a bolsa</button>
-                </div>
-                <div class="e-info">
-                    <div>
-                        <div class="e-brand"
-                            th:text="${productos != null and productos.size() > 3 ? productos[3].brand : 'Orígenes'}">
-                            Orígenes</div>
-                        <div class="e-name"
-                            th:text="${productos != null and productos.size() > 3 ? productos[3].name : 'Pulseras Artesanales'}">
-                            Pulseras Artesanales</div>
-                    </div>
-                    <div class="e-price"
-                        th:text="${productos != null and productos.size() > 3 ? productos[3].price : '$680'}">$680</div>
-                </div>
-            </div>
-
-            <!-- Card 5: col 7-13, row 2 -->
-            <div class="e-card e-card--5 product-card"
-                 data-id="prod-5"
-                 th:data-name="${productos != null and productos.size() > 4 ? productos[4].name : 'Aretes Statement'}"
-                 th:data-brand="${productos != null and productos.size() > 4 ? productos[4].brand : 'Taller Joya'}"
-                 th:data-price="${productos != null and productos.size() > 4 ? productos[4].price : '$420'}"
-                 data-image="aretes.jpg">
-                <div class="e-img">
-                    <img th:src="@{/images/aretes.jpg}" src="aretes.jpg" alt="Aretes statement">
-                    <button class="btn-fav" aria-label="Agregar a favoritos">🤍</button>
-                    <button class="btn-add-cart">Añadir a bolsa</button>
-                </div>
-                <div class="e-info">
-                    <div>
-                        <div class="e-brand"
-                            th:text="${productos != null and productos.size() > 4 ? productos[4].brand : 'Taller Joya'}">
-                            Taller Joya</div>
-                        <div class="e-name"
-                            th:text="${productos != null and productos.size() > 4 ? productos[4].name : 'Aretes Statement'}">
-                            Aretes Statement</div>
-                    </div>
-                    <div class="e-price"
-                        th:text="${productos != null and productos.size() > 4 ? productos[4].price : '$420'}">$420</div>
-                </div>
-            </div>
-
-        </div><!-- /editorial-grid -->
-
-        <!-- FILA 2 — 4 cards uniformes -->
-        <div class="editorial-grid-row2">
-
-            <div class="e-card e-card-r2 product-card"
-                 data-id="prod-6"
-                 th:data-name="${productos != null and productos.size() > 5 ? productos[5].name : 'Collar Artesanal'}"
-                 th:data-brand="${productos != null and productos.size() > 5 ? productos[5].brand : 'Joyería Nativa'}"
-                 th:data-price="${productos != null and productos.size() > 5 ? productos[5].price : '$560'}"
-                 data-image="collar.jpg">
-                <div class="e-img">
-                    <img th:src="@{/images/collar.jpg}" src="collar.jpg" alt="Collar artesanal">
-                    <button class="btn-fav" aria-label="Agregar a favoritos">🤍</button>
-                    <button class="btn-add-cart">Añadir a bolsa</button>
-                </div>
-                <div class="e-info">
-                    <div>
-                        <div class="e-brand"
-                            th:text="${productos != null and productos.size() > 5 ? productos[5].brand : 'Joyería Nativa'}">
-                            Joyería Nativa</div>
-                        <div class="e-name"
-                            th:text="${productos != null and productos.size() > 5 ? productos[5].name : 'Collar Artesanal'}">
-                            Collar Artesanal</div>
-                    </div>
-                    <div class="e-price"
-                        th:text="${productos != null and productos.size() > 5 ? productos[5].price : '$560'}">$560</div>
-                </div>
-            </div>
-
-            <div class="e-card e-card-r2 product-card"
-                 data-id="prod-7"
-                 th:data-name="${productos != null and productos.size() > 6 ? productos[6].name : 'Chanclas Trenzadas'}"
-                 th:data-brand="${productos != null and productos.size() > 6 ? productos[6].brand : 'Artesana Piel'}"
-                 th:data-price="${productos != null and productos.size() > 6 ? productos[6].price : '$890'}"
-                 data-image="chanclas.jpg">
-                <div class="e-img">
-                    <img th:src="@{/images/chanclas.jpg}" src="chanclas.jpg" alt="Chanclas trenzadas">
-                    <button class="btn-fav" aria-label="Agregar a favoritos">🤍</button>
-                    <button class="btn-add-cart">Añadir a bolsa</button>
-                </div>
-                <div class="e-info">
-                    <div>
-                        <div class="e-brand"
-                            th:text="${productos != null and productos.size() > 6 ? productos[6].brand : 'Artesana Piel'}">
-                            Artesana Piel</div>
-                        <div class="e-name"
-                            th:text="${productos != null and productos.size() > 6 ? productos[6].name : 'Chanclas Trenzadas'}">
-                            Chanclas Trenzadas</div>
-                    </div>
-                    <div class="e-price"
-                        th:text="${productos != null and productos.size() > 6 ? productos[6].price : '$890'}">$890</div>
-                </div>
-            </div>
-
-            <div class="e-card e-card-r2 product-card"
-                 data-id="prod-8"
-                 th:data-name="${productos != null and productos.size() > 7 ? productos[7].name : 'Chaqueta Estructurada'}"
-                 th:data-brand="${productos != null and productos.size() > 7 ? productos[7].brand : 'Estudio Local'}"
-                 th:data-price="${productos != null and productos.size() > 7 ? productos[7].price : '$3,200'}"
-                 data-image="chaqueta.jpg">
-                <div class="e-img">
-                    <img th:src="@{/images/chaqueta.jpg}" src="chaqueta.jpg" alt="Chaqueta estructurada">
-                    <button class="btn-fav" aria-label="Agregar a favoritos">🤍</button>
-                    <button class="btn-add-cart">Añadir a bolsa</button>
-                </div>
-                <div class="e-info">
-                    <div>
-                        <div class="e-brand"
-                            th:text="${productos != null and productos.size() > 7 ? productos[7].brand : 'Estudio Local'}">
-                            Estudio Local</div>
-                        <div class="e-name"
-                            th:text="${productos != null and productos.size() > 7 ? productos[7].name : 'Chaqueta Estructurada'}">
-                            Chaqueta Estructurada</div>
-                    </div>
-                    <div class="e-price"
-                        th:text="${productos != null and productos.size() > 7 ? productos[7].price : '$3,200'}">$3,200
-                    </div>
-                </div>
-            </div>
-
-            <div class="e-card e-card-r2 product-card"
-                 data-id="prod-9"
-                 th:data-name="${productos != null and productos.size() > 8 ? productos[8].name : 'ChamarraLV Azul'}"
-                 th:data-brand="${productos != null and productos.size() > 8 ? productos[8].brand : 'Louis Vuitton'}"
-                 th:data-price="${productos != null and productos.size() > 8 ? productos[8].price : '$3,200'}"
-                 data-image="azul.jpg">
-                <div class="e-img" style="background:#2A2118;">
-                    <img th:src="@{/images/azul.jpg}" src="azul.jpg" alt="ChamarraLV Azul"
-                        style="object-fit:contain; padding:1.5rem;">
-                    <button class="btn-fav" aria-label="Agregar a favoritos">🤍</button>
-                    <button class="btn-add-cart">Añadir a bolsa</button>
-                </div>
-                <div class="e-info">
-                    <div>
-                        <div class="e-brand"
-                            th:text="${productos != null and productos.size() > 8 ? productos[8].brand : 'Louis Vuitton'}">
-                            Louis Vuitton </div>
-                        <div class="e-name"
-                            th:text="${productos != null and productos.size() > 8 ? productos[8].name : 'ChamarraLV Azul'}">
-                            ChamarraLV Azul</div>
-                    </div>
-                    <div class="e-price"
-                        th:text="${productos != null and productos.size() > 8 ? productos[8].price : '$3,200'}">$3,200
-                    </div>
-                </div>
-            </div>
-
-        </div><!-- /editorial-grid-row2 -->
+        </div>
 
         <div class="featured-cta">
-            <a th:href="@{/productos}" href="#" class="btn-primary">
+            <a th:href="@{/colecciones}" class="btn-primary">
                 Ver todo el catálogo
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
             </a>
         </div>
     </section>
 
-    <!-- ═══════════════════════════════════════════
-         CREATORS — MINI STORES
-    ════════════════════════════════════════════ -->
+    <!-- ══ CTA BANNER — Vender ══ -->
+    <div class="cta-banner">
+        <div>
+            <h2 class="cta-banner-title">Abre tu espacio.<br><em>Vende lo que amas.</em></h2>
+            <p class="cta-banner-sub">Únete a nuestra comunidad de creadores independientes. Sin comisiones ocultas, sin burocracia.</p>
+        </div>
+        <a th:href="@{/vender}" class="btn-primary-light">
+            Empezar ahora
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+        </a>
+    </div>
+
+    <!-- ══ CREADORES — Loop real ══ -->
     <section class="creators">
         <div class="c-hdr-wrap">
             <div class="sec-hdr" style="margin-bottom:0">
                 <span class="sec-ey">Comunidad</span>
                 <h2 class="sec-title">Creadores <em>Destacados</em></h2>
             </div>
-            <a th:href="@{/creadores}" href="#" class="btn-link">Ver todos los creadores</a>
+            <a th:href="@{/creadores}" class="btn-link">Ver todos →</a>
         </div>
 
         <div class="creator-grid">
-
-            <!-- Thymeleaf loop cuando hay datos del modelo -->
-            <div class="creator-card" th:each="creador : ${creadores}">
-                <div class="creator-header">
-                    <div class="creator-avatar"
-                        th:style="${creador.avatarGradient != null and !creador.avatarGradient.isEmpty() ? 'background:' + creador.avatarGradient : ''}"
-                        th:text="${creador.avatarInitial}">D</div>
-                    <div class="creator-meta">
-                        <h3 th:text="${creador.username}">Daniela's Archive</h3>
-                        <span th:text="${creador.location + ' • ' + creador.products.size() + ' piezas'}">
-                            Ciudad de México • 42 piezas
-                        </span>
-                    </div>
-                </div>
-                <div class="creator-showcase">
-                    <div class="cs-main"
-                        th:style="${creador.mainBg != null and !creador.mainBg.isEmpty() ? 'background:' + creador.mainBg : ''}">
-                    </div>
-                    <div class="cs-sub1"
-                        th:style="${creador.sub1Bg != null and !creador.sub1Bg.isEmpty() ? 'background:' + creador.sub1Bg : ''}">
-                    </div>
-                    <div class="cs-sub2"
-                        th:style="${creador.sub2Bg != null and !creador.sub2Bg.isEmpty() ? 'background:' + creador.sub2Bg : ''}">
-                    </div>
-                </div>
-                <div class="creator-footer">
-                    <div class="creator-tags">
-                        <span class="c-tag" th:each="tag : ${creador.tags}" th:text="${tag}">Vintage</span>
-                    </div>
-                    <a th:href="@{/tienda/{h}(h=${creador.handle})}" href="#" class="btn-outline">Visitar Tienda</a>
-                </div>
-            </div>
-
-            <!-- ═══ FALLBACK — solo visible si el controlador no manda creadores ═══
-                 Si tu controlador ya manda la lista, estos 3 no aparecen.
-                 Si mandas 1 solo creador, agrega los otros 2 en el controlador.
-            ═══════════════════════════════════════════════════════════════════ -->
-            <th:block th:if="${creadores == null or #lists.isEmpty(creadores)}">
-
-                <div class="creator-card">
-                    <div class="creator-header">
-                        <div class="creator-avatar" style="background:linear-gradient(135deg,#FFD6BA,#FFB38A)">D</div>
-                        <div class="creator-meta">
-                            <h3>Daniela's Archive</h3>
-                            <span>Ciudad de México • 42 piezas</span>
+            <!-- Loop real de creadores de la BD -->
+            <th:block th:if="${creadores != null and !creadores.isEmpty()}">
+                <div th:each="creador, cStat : ${creadores}"
+                     th:if="${cStat.index < 3}"
+                     class="creator-card-real"
+                     th:onclick="|window.location.href='@{/tienda/{id}(id=${creador.id})}'|">
+                    <!-- Primera imagen del creador si tiene productos -->
+                    <div class="creator-first-product">
+                        <img th:if="${!creador.products.isEmpty() and creador.products[0].image != null and (creador.products[0].image.startsWith('http') or creador.products[0].image.startsWith('/uploads/'))}"
+                             th:src="${creador.products[0].image}"
+                             th:alt="${creador.firstName}">
+                        <div th:if="${creador.products.isEmpty() or creador.products[0].image == null or !(creador.products[0].image.startsWith('http') or creador.products[0].image.startsWith('/uploads/'))}"
+                             style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:0.8rem;letter-spacing:0.1em;">
+                            SIN PRODUCTOS AÚN
                         </div>
                     </div>
-                    <div class="creator-showcase">
-                        <div class="cs-main" style="background:#E8DCCB"></div>
-                        <div class="cs-sub1" style="background:#EBCFC0"></div>
-                        <div class="cs-sub2" style="background:#DFD0E8"></div>
+                    <div class="creator-header" style="margin-bottom:1rem;">
+                        <div class="creator-avatar"
+                             th:style="${creador.avatarGradient != null ? 'background:' + creador.avatarGradient : 'background:linear-gradient(135deg,#FFD6BA,#FFB38A)'}"
+                             th:text="${creador.avatarInitial != null ? creador.avatarInitial : (creador.firstName != null ? creador.firstName.substring(0,1).toUpperCase() : creador.username.substring(0,1).toUpperCase())}">D</div>
+                        <div class="creator-meta">
+                            <h3 th:text="${creador.firstName != null ? creador.firstName + ' ' + (creador.lastName != null ? creador.lastName : '') : creador.username}">Creador</h3>
+                            <span th:text="${(creador.location != null and !creador.location.isEmpty() ? creador.location : 'Sin ubicacion registrada') + ' • ' + creador.products.size() + ' piezas'}">Sin ubicacion registrada • 0 piezas</span>
+                        </div>
                     </div>
                     <div class="creator-footer">
                         <div class="creator-tags">
-                            <span class="c-tag">Vintage</span>
-                            <span class="c-tag">Accesorios</span>
+                            <span class="c-tag" th:each="tag : ${creador.tags}" th:text="${tag}">Tag</span>
+                            <span class="c-tag" th:if="${creador.tags.isEmpty()}">Creador</span>
                         </div>
-                        <a href="#" class="btn-outline">Visitar Tienda</a>
+                        <a th:href="@{/tienda/{id}(id=${creador.id})}" class="btn-outline" onclick="event.stopPropagation();">Ver Tienda</a>
                     </div>
                 </div>
-
-                <div class="creator-card">
-                    <div class="creator-header">
-                        <div class="creator-avatar" style="background:linear-gradient(135deg,#C8D8C4,#8FAF88)">M</div>
-                        <div class="creator-meta">
-                            <h3>Manos Studio</h3>
-                            <span>Guadalajara • 67 piezas</span>
-                        </div>
-                    </div>
-                    <div class="creator-showcase">
-                        <div class="cs-main" style="background:#C9CEC4"></div>
-                        <div class="cs-sub1" style="background:#D4CABD"></div>
-                        <div class="cs-sub2" style="background:#E8DCCB"></div>
-                    </div>
-                    <div class="creator-footer">
-                        <div class="creator-tags">
-                            <span class="c-tag">Textil</span>
-                            <span class="c-tag">Lino</span>
-                        </div>
-                        <a href="#" class="btn-outline">Visitar Tienda</a>
-                    </div>
-                </div>
-
-                <div class="creator-card">
-                    <div class="creator-header">
-                        <div class="creator-avatar" style="background:linear-gradient(135deg,#DFD0E8,#B8A0CC)">N</div>
-                        <div class="creator-meta">
-                            <h3>Noma Estudio</h3>
-                            <span>CDMX • 128 piezas</span>
-                        </div>
-                    </div>
-                    <div class="creator-showcase">
-                        <div class="cs-main" style="background:#D4CDCA"></div>
-                        <div class="cs-sub1" style="background:#C8CDD4"></div>
-                        <div class="cs-sub2" style="background:#E8DCCB"></div>
-                    </div>
-                    <div class="creator-footer">
-                        <div class="creator-tags">
-                            <span class="c-tag">Ropa</span>
-                            <span class="c-tag">SS25</span>
-                        </div>
-                        <a href="#" class="btn-outline">Visitar Tienda</a>
-                    </div>
-                </div>
-
             </th:block>
 
+            <!-- Empty state cuando no hay creadores en la BD -->
+            <th:block th:if="${creadores == null or creadores.isEmpty()}">
+                <div style="grid-column:1/-1; text-align:center; padding:3rem 2rem;">
+                    <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:1.5rem;">
+                        Aún no hay creadores. ¡Sé el primero en abrir tu espacio!
+                    </p>
+                    <a th:href="@{/vender}" class="btn-outline" style="display:inline-flex;text-decoration:none;">
+                        Convertirme en Creador →
+                    </a>
+                </div>
+            </th:block>
         </div>
     </section>
 
-    <!-- FOOTER -->
+
+    <!-- ══ SOBRE NOSOTROS ══ -->
+    <section class="about-section" id="sobre-nosotros">
+
+        <!-- Eyebrow + Título -->
+        <div class="about-top">
+            <div class="about-label-line">
+                <span class="about-eyebrow">Quiénes Somos</span>
+                <div class="about-line"></div>
+            </div>
+            <h2 class="about-title">Un bazar para quienes<br>crean con <em>alma.</em></h2>
+        </div>
+
+        <!-- Bloque central: texto + imagen grande -->
+        <div class="about-body">
+            <div class="about-text-col">
+                <p class="about-lead">
+                    Bazarcito nació de una pregunta simple: ¿por qué es tan difícil que una persona talentosa pueda vender lo que hace?
+                </p>
+                <p class="about-body-text">
+                    Somos un marketplace independiente diseñado para dar espacio a pequeños negocios, artesanas, diseñadores de moda y personas con algo único entre las manos. Sin intermediarios. Sin cuotas ocultas. Solo tú, tu trabajo y las personas que lo necesitan.
+                </p>
+                <p class="about-body-text">
+                    Cada prenda en Bazarcito cuenta una historia: quién la hizo, con qué intención y para quién. Creemos que comprar de manera consciente es un acto de cultura, y que el estilo independiente merece un escaparate a la altura.
+                </p>
+                <a href="#/vender" th:href="@{/vender}" class="about-cta-link">
+                    Únete como creador
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+
+            <div class="about-visual-col">
+                <div class="about-img-stack">
+                    <div class="about-img-card about-img-card--main">
+                        <div class="about-img-placeholder">
+                            <svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="1"><circle cx="40" cy="28" r="12"/><path d="M16 68c0-13.255 10.745-24 24-24s24 10.745 24 24"/></svg>
+                            <span>Creador independiente</span>
+                        </div>
+                    </div>
+                    <div class="about-img-card about-img-card--accent">
+                        <div class="about-img-placeholder">
+                            <svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="1"><rect x="12" y="16" width="56" height="48" rx="3"/><path d="M12 30h56M28 16v14"/></svg>
+                            <span>Tienda propia</span>
+                        </div>
+                    </div>
+                    <!-- Sticker flotante -->
+                    <div class="about-float-badge">
+                        <span class="afb-num">100%</span>
+                        <span class="afb-label">Creadores reales</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tres pilares -->
+        <div class="about-pillars">
+            <div class="pillar">
+                <div class="pillar-icon">✦</div>
+                <h3 class="pillar-title">Piezas únicas</h3>
+                <p class="pillar-desc">Cada artículo es irrepetible. Aquí no encontrarás fast fashion; solo ediciones limitadas, detalles cuidados y trabajo artesanal seleccionado para durar más de una temporada.</p>
+            </div>
+            <div class="pillar">
+                <div class="pillar-icon">◎</div>
+                <h3 class="pillar-title">Creadores reales</h3>
+                <p class="pillar-desc">Personas y pequeños negocios con nombre, historia y talento propio. Cada perfil muestra su ubicación, sus piezas y una forma directa de descubrir su tienda.</p>
+            </div>
+            <div class="pillar">
+                <div class="pillar-icon">⬡</div>
+                <h3 class="pillar-title">Comunidad primero</h3>
+                <p class="pillar-desc">Cada compra va directo al creador. Tú decides a quién apoyar, qué historias vestir y qué tipo de moda quieres que tenga más espacio en el mundo.</p>
+            </div>
+        </div>
+
+        <!-- Manifesto oscuro -->
+        <div class="about-manifesto">
+            <div class="manifesto-inner">
+                <span class="manifesto-eyebrow">Nuestro manifiesto</span>
+                <blockquote class="manifesto-quote">
+                    "La moda independiente no es una tendencia.<br>
+                    <em>Es una postura.</em>"
+                </blockquote>
+                <p class="manifesto-body">
+                    Creemos en el valor de lo hecho a mano, en las telas con historia y en los creadores que no necesitan millones de seguidores para tener un lugar donde vender. Bazarcito es ese lugar.
+                </p>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- ══ FOOTER ══ -->
     <footer class="footer">
         <div class="f-grid">
             <div>
-                <div class="f-logo">Baz<span>a</span>r</div>
-                <p class="f-desc">Un marketplace editorial para creadores independientes y piezas que importan.</p>
+                <div class="f-logo">Baz<span>ar</span>cito</div>
+                <p class="f-desc">Marketplace editorial para creadores independientes y piezas que importan.</p>
             </div>
             <div class="f-col">
                 <div class="f-col-title">Explorar</div>
                 <ul>
-                    <li><a href="#">The Edit</a></li>
-                    <li><a href="#">Archivos</a></li>
-                    <li><a href="#">Creadores</a></li>
-                    <li><a href="#">Espacios</a></li>
+                    <li><a th:href="@{/colecciones}">Colecciones</a></li>
+                    <li><a th:href="@{/creadores}">Creadores</a></li>
+                    <li><a th:href="@{/tiendas}">Tiendas</a></li>
+                    <li><a th:href="@{/favoritos}">Favoritos</a></li>
                 </ul>
             </div>
             <div class="f-col">
-                <div class="f-col-title">Comunidad</div>
+                <div class="f-col-title">Vender</div>
                 <ul>
-                    <li><a href="#">Abrir tu tienda</a></li>
-                    <li><a href="#">Journal</a></li>
-                    <li><a href="#">Eventos físicos</a></li>
-                    <li><a href="#">Recursos</a></li>
+                    <li><a th:href="@{/vender}">Abrir tu tienda</a></li>
+                    <li><a th:href="@{/register}">Registrarse</a></li>
+                    <li><a th:href="@{/login}">Iniciar sesión</a></li>
                 </ul>
             </div>
             <div class="f-col">
@@ -519,7 +644,7 @@
             </div>
         </div>
         <div class="f-bot">
-            <span>© 2025 Bazar Editorial.</span>
+            <span>© 2025 Bazarcito.</span>
             <div class="f-leg">
                 <a href="#">Privacidad</a>
                 <a href="#">Términos</a>
@@ -527,25 +652,22 @@
         </div>
     </footer>
 
-    <!-- OVERLAYS -->
+    <!-- ══ SEARCH OVERLAY ══ -->
     <div id="searchOverlay" class="search-overlay">
         <div class="search-header">
             <input type="text" id="searchInput" placeholder="Buscar piezas, creadores...">
             <button id="btnCloseSearch" class="btn-close">&times;</button>
         </div>
-        <div class="search-results" id="searchResults">
-            <!-- Resultados se inyectan acá -->
-        </div>
+        <div class="search-results" id="searchResults"></div>
     </div>
 
-    <!-- CART DRAWER -->
+    <!-- ══ CART DRAWER ══ -->
     <div id="cartDrawer" class="cart-drawer">
         <div class="cart-header">
             <h3>Tu Bolsa</h3>
             <button id="btnCloseCart" class="btn-close">&times;</button>
         </div>
         <div class="cart-items" id="cartItems">
-            <!-- Items se inyectan acá -->
             <div class="cart-empty" id="cartEmpty">Tu bolsa está vacía.</div>
         </div>
         <div class="cart-footer">
@@ -553,13 +675,23 @@
                 <span>Total</span>
                 <span id="cartTotalValue">$0</span>
             </div>
-            <a th:href="@{/checkout}" class="btn-primary" style="width: 100%; justify-content: center; text-decoration: none;">Proceder al pago</a>
+            <a th:href="@{/checkout}" class="btn-primary" style="width:100%;justify-content:center;text-decoration:none;">Proceder al pago</a>
         </div>
     </div>
-    
     <div id="drawerOverlay" class="drawer-overlay"></div>
 
-    <script th:src="@{/js/app.js(v=2)}"></script>
+    <script th:src="@{/js/app.js}"></script>
+    <script>
+        // Toast helper global
+        window.showToast = function(msg, type) {
+            const c = document.getElementById('toastContainer');
+            const t = document.createElement('div');
+            t.className = 'toast' + (type === 'accent' ? ' accent' : '');
+            t.textContent = msg;
+            c.appendChild(t);
+            requestAnimationFrame(() => { requestAnimationFrame(() => { t.classList.add('show'); }); });
+            setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 2800);
+        };
+    </script>
 </body>
-
 </html>

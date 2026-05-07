@@ -22,6 +22,9 @@ public class OrderItem {
     @Column(nullable = false)
     private Integer quantity;
 
+    @Column(name = "selected_size", length = 20)
+    private String selectedSize;
+
     @Column(name = "unit_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal unitPrice;
 
@@ -36,6 +39,8 @@ public class OrderItem {
     public void setProduct(Product product) { this.product = product; }
     public Integer getQuantity() { return quantity; }
     public void setQuantity(Integer quantity) { this.quantity = quantity; }
+    public String getSelectedSize() { return selectedSize; }
+    public void setSelectedSize(String selectedSize) { this.selectedSize = selectedSize; }
     public BigDecimal getUnitPrice() { return unitPrice; }
     public void setUnitPrice(BigDecimal unitPrice) { this.unitPrice = unitPrice; }
 }

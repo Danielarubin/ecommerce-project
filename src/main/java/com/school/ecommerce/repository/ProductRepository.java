@@ -7,4 +7,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
     java.util.List<Product> findBySeller(com.school.ecommerce.model.User seller);
+    java.util.List<Product> findBySellerIdOrderByIdDesc(Long sellerId);
+    java.util.List<Product> findByCollectionIdOrderByIdDesc(Long collectionId);
+    java.util.List<Product> findBySellerIsNotNullOrderByIdDesc();
+    java.util.List<Product> findByStatusIsNull();
+    long countBySellerId(Long sellerId);
+    long deleteBySellerIsNull();
 }

@@ -29,7 +29,11 @@
             <div class="checkout-form-col">
                 <h2 class="checkout-title">Finalizar <em>Compra</em></h2>
                 
-                <form th:action="@{/checkout}" method="post" class="checkout-form">
+                <form th:action="@{/checkout}" method="post" class="checkout-form"
+                      data-confirm="Revisa que tus datos de envio y el resumen de tu bolsa esten correctos. Al confirmar, registraremos tu orden."
+                      data-confirm-title="Confirmar compra"
+                      data-confirm-text="Confirmar y pagar"
+                      data-confirm-danger="false">
                     
                     <div class="form-section">
                         <h3>1. Datos de Contacto</h3>
@@ -91,10 +95,11 @@
                     
                     <div class="summary-items">
                         <div class="s-item" th:each="item : ${cartItems}">
-                            <img th:src="@{'/images/' + ${item.image}}" th:alt="${item.name}">
+                            <img th:if="${item.image != null and (item.image.startsWith('http') or item.image.startsWith('/uploads/'))}" th:src="${item.image}" th:alt="${item.name}">
                             <div class="s-item-info">
                                 <h4 th:text="${item.name}">Nombre Producto</h4>
                                 <p th:text="${item.brand}">Marca</p>
+                                <p th:if="${item.selectedSize != null}" th:text="'Talla: ' + ${item.selectedSize}">Talla</p>
                                 <span th:text="'Cant: ' + ${item.qty}">Cant: 1</span>
                             </div>
                             <div class="s-item-price" th:text="${#numbers.formatCurrency(item.price * item.qty)}">$0.00</div>
@@ -119,5 +124,6 @@
             </div>
         </div>
     </div>
+    <script th:src="@{/js/app.js}"></script>
 </body>
 </html>

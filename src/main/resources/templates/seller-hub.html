@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creator Studio — Bazarcito</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <style>
+        body { background: #F5F0E7; }
+
+        .hub-header {
+            padding: 7rem 2.5rem 2.5rem;
+            background:
+                linear-gradient(120deg, rgba(255,179,138,0.18), rgba(255,255,255,0) 36%),
+                var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: end;
+            gap: 2rem;
+        }
+        .hub-eyebrow {
+            font-size: 0.65rem; letter-spacing: 0.15em;
+            text-transform: uppercase; color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        .hub-title {
+            font-family: var(--font-serif);
+            font-size: clamp(2.4rem, 5vw, 4.8rem);
+            font-weight: 800; line-height: 0.98;
+            color: var(--text-dark);
+            max-width: 780px;
+        }
+        .hub-stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(120px, 1fr));
+            gap: 0.8rem; margin-top: 1.6rem;
+            padding-top: 1.5rem; border-top: 1px solid var(--border-color);
+            max-width: 920px;
+        }
+        .stat-box {
+            min-height: 88px;
+            border: 1px solid var(--border-color);
+            background: rgba(255,255,255,0.58);
+            padding: 0.95rem 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .stat-val {
+            display: block; font-family: var(--font-serif);
+            font-size: clamp(1.45rem, 3vw, 2.25rem); font-weight: 800; color: var(--text-dark);
+            line-height: 1;
+            overflow-wrap: anywhere;
+        }
+        .stat-lbl {
+            color: var(--text-muted); font-size: 0.65rem;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            margin-top: 0.3rem; display: block;
+        }
+
+        .hub-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            min-width: 320px;
+        }
+
+        .hub-content { padding: 2.75rem 2.5rem 4rem; }
+        .hub-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+        .hub-section-title {
+            font-family: var(--font-serif);
+            font-size: 1.8rem; font-weight: 700;
+            margin-bottom: 0; color: var(--text-dark);
+        }
+
+        /* Product cards del hub */
+        .hub-product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.25rem;
+        }
+        .hub-product-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            min-width: 0;
+        }
+        .hub-product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(42,33,24,0.08);
+        }
+        .hub-product-img {
+            aspect-ratio: 4 / 5;
+            overflow: hidden;
+            background: #ECE3D6;
+            position: relative;
+        }
+        .hub-product-img img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.4s ease;
+            display: block;
+        }
+        .hub-product-card:hover .hub-product-img img { transform: scale(1.04); }
+        .hub-product-empty-img {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-align: center;
+            padding: 1rem;
+        }
+        .hub-product-info { padding: 1rem 1rem 1.1rem; }
+        .hub-product-info h4 {
+            font-size: 1.02rem; font-weight: 600;
+            color: var(--text-dark); margin-bottom: 0.35rem;
+            line-height: 1.25;
+        }
+        .hub-product-info .hub-price {
+            font-family: var(--font-serif); font-size: 1.25rem; font-weight: 800;
+            color: var(--text-dark);
+        }
+        .hub-product-info .hub-stock {
+            font-size: 0.7rem; color: var(--text-muted);
+            letter-spacing: 0.05em; text-transform: uppercase;
+            margin-top: 0.25rem;
+        }
+        .hub-state-pill {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.62rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            border-radius: 999px;
+            padding: 0.25rem 0.6rem;
+            border: 1px solid var(--border-color);
+            margin-bottom: 0.8rem;
+        }
+        .hub-state-pill.available { background: #E8F5E9; color: #2E7D32; border-color: #C8E6C9; }
+        .hub-state-pill.pending { background: #FFF8E1; color: #9A6B00; border-color: #FFE9A7; }
+        .hub-state-pill.sold { background: #F3E5F5; color: #6A1B9A; border-color: #E1BEE7; }
+        .hub-actions-row {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.65rem;
+        }
+        .hub-collection-panel {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 2rem;
+            display: grid;
+            grid-template-columns: minmax(280px, 0.8fr) minmax(320px, 1.2fr);
+            gap: 1.25rem;
+            align-items: start;
+        }
+        .collection-form {
+            display: grid;
+            gap: 0.75rem;
+        }
+        .collection-input,
+        .collection-textarea {
+            width: 100%;
+            border: 1px solid var(--border-color);
+            background: var(--bg-primary);
+            border-radius: 6px;
+            padding: 0.8rem 0.85rem;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+        }
+        .collection-textarea {
+            min-height: 92px;
+            resize: vertical;
+        }
+        .collection-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 0.75rem;
+        }
+        .collection-mini-card {
+            border: 1px solid var(--border-color);
+            background: #FFFDF9;
+            border-radius: 8px;
+            padding: 0.9rem;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .collection-mini-card h3 {
+            font-family: var(--font-serif);
+            font-size: 1.05rem;
+            line-height: 1.15;
+            margin-bottom: 0.45rem;
+        }
+        .collection-mini-card p {
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            line-height: 1.5;
+        }
+        .collection-mini-card span {
+            color: var(--text-muted);
+            font-size: 0.62rem;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+            margin-top: 1rem;
+        }
+        .hub-status-form {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 0.5rem;
+        }
+        .hub-select {
+            width: 100%;
+            border: 1px solid var(--border-color);
+            background: var(--bg-primary);
+            border-radius: 6px;
+            padding: 0.65rem 2rem 0.65rem 0.75rem;
+            font-size: 0.76rem;
+            min-height: 42px;
+            color: var(--text-dark);
+            appearance: none;
+            background-image: linear-gradient(45deg, transparent 50%, var(--text-dark) 50%), linear-gradient(135deg, var(--text-dark) 50%, transparent 50%);
+            background-position: calc(100% - 16px) 17px, calc(100% - 11px) 17px;
+            background-size: 5px 5px, 5px 5px;
+            background-repeat: no-repeat;
+        }
+        .hub-select:focus {
+            outline: 2px solid rgba(255,179,138,0.45);
+            border-color: var(--text-dark);
+        }
+        .hub-btn {
+            border: 1px solid var(--border-color);
+            background: var(--bg-primary);
+            border-radius: 6px;
+            padding: 0.65rem 0.75rem;
+            font-size: 0.67rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            min-height: 42px;
+        }
+        .hub-btn-danger {
+            border-color: #F1B4B4;
+            color: #A11A1A;
+            background: #FFF5F5;
+        }
+
+        /* Empty state */
+        .empty-hub {
+            text-align: center;
+            padding: 5rem 2rem;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            border: 1px dashed var(--border-color);
+        }
+        .empty-hub .empty-icon { font-size: 3rem; opacity: 0.3; display: block; margin-bottom: 1.5rem; }
+        .empty-hub h3 {
+            font-family: var(--font-serif);
+            font-size: 1.8rem; font-weight: 700;
+            color: var(--text-dark); margin-bottom: 0.75rem;
+        }
+        .empty-hub p { color: var(--text-muted); font-size: 0.9rem; max-width: 320px; margin: 0 auto 2rem; line-height: 1.7; }
+
+        /* Success banner */
+        .success-banner {
+            background: #E8F5E9; border: 1px solid #A5D6A7;
+            border-radius: 3px; padding: 1rem 1.5rem;
+            margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem;
+            font-size: 0.9rem; color: #2E7D32;
+        }
+        .info-banner {
+            border-radius: 3px; padding: 1rem 1.5rem;
+            margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem;
+            font-size: 0.86rem;
+            border: 1px solid #D7CCE8;
+            color: #5E3A84;
+            background: #F6F0FD;
+        }
+        .hub-delete-form { display: flex; }
+        .hub-delete-form .hub-btn { width: 100%; }
+
+        @media (max-width: 900px) {
+            .hub-header { grid-template-columns: 1fr; padding-top: 6rem; }
+            .hub-actions { justify-content: flex-start; min-width: 0; }
+            .hub-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .hub-collection-panel { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 560px) {
+            .hub-header, .hub-content { padding-left: 1rem; padding-right: 1rem; }
+            .hub-stats { grid-template-columns: 1fr; }
+            .hub-actions a { width: 100%; justify-content: center; }
+            .hub-status-form { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="nav">
+        <div class="nav-links">
+            <a th:href="@{/colecciones}">Colecciones</a>
+            <a th:href="@{/creadores}">Creadores</a>
+            <a th:href="@{/tiendas}">Tiendas</a>
+        </div>
+        <a class="nav-logo" th:href="@{/}">Baz<span>ar</span>cito</a>
+        <div class="nav-right">
+            <a th:href="@{/vender}" class="nav-action active">Vender</a>
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" class="nav-action" style="background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit;">Salir</button>
+            </form>
+        </div>
+    </nav>
+
+    <!-- HUB HEADER -->
+    <header class="hub-header">
+        <div>
+            <div class="hub-eyebrow">Creator Studio</div>
+            <h1 class="hub-title"
+                th:text="${user.firstName != null
+                           ? 'Hola, ' + user.firstName
+                           : 'Hola, ' + user.username}">Hola!</h1>
+            <div class="hub-stats">
+                <div class="stat-box">
+                    <span class="stat-val" th:text="${myProducts != null ? myProducts.size() : 0}">0</span>
+                    <span class="stat-lbl">Piezas publicadas</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val" th:text="${statusCount != null ? statusCount[T(com.school.ecommerce.model.ProductStatus).AVAILABLE] : 0}">0</span>
+                    <span class="stat-lbl">Disponibles</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val" th:text="${statusCount != null ? statusCount[T(com.school.ecommerce.model.ProductStatus).PENDING] : 0}">0</span>
+                    <span class="stat-lbl">Pendientes</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val" th:text="${user.location != null ? user.location : '—'}">—</span>
+                    <span class="stat-lbl">Ubicación</span>
+                </div>
+            </div>
+        </div>
+        <div class="hub-actions">
+            <a th:href="@{/vender/subir-producto}" class="btn-primary" style="text-decoration:none;">
+                + Subir Pieza
+            </a>
+            <a th:href="@{/tienda/{id}(id=${user.id})}" class="btn-outline" style="text-decoration:none;">
+                Ver Tienda Pública
+            </a>
+        </div>
+    </header>
+
+    <main class="hub-content">
+
+        <!-- Success banner -->
+        <div class="success-banner" th:if="${param.success != null}">
+            <span>✓</span> ¡Pieza subida exitosamente! Ya está visible en el catálogo.
+        </div>
+        <div class="info-banner" th:if="${param.updated != null}">
+            <span>●</span> Estado de producto actualizado.
+        </div>
+        <div class="info-banner" th:if="${param.deleted != null}">
+            <span>●</span> Producto eliminado correctamente.
+        </div>
+        <div class="success-banner" th:if="${param.collectionCreated != null}">
+            <span>✓</span> Colección creada. Ya puedes asignarle piezas.
+        </div>
+        <div class="info-banner" th:if="${param.collectionUpdated != null}">
+            <span>●</span> Colección de producto actualizada.
+        </div>
+
+        <section class="hub-collection-panel">
+            <div>
+                <div class="hub-eyebrow">Colecciones</div>
+                <h2 class="hub-section-title">Organiza tu tienda</h2>
+                <p style="color:var(--text-muted);font-size:.9rem;line-height:1.7;margin-top:.75rem;">
+                    Crea colecciones como Vestidos de noche, Denim intervenido o Accesorios vintage para que aparezcan en la sección pública de colecciones.
+                </p>
+            </div>
+            <div>
+                <form th:action="@{/vender/colecciones}" method="post" class="collection-form">
+                    <input class="collection-input" type="text" name="name" maxlength="120" required placeholder="Nombre de colección">
+                    <textarea class="collection-textarea" name="description" placeholder="Descripción breve para compradores"></textarea>
+                    <button type="submit" class="btn-primary" style="justify-content:center;">Crear colección</button>
+                </form>
+                <div class="collection-list" th:if="${myCollections != null and !myCollections.isEmpty()}" style="margin-top:1rem;">
+                    <article class="collection-mini-card" th:each="collection : ${myCollections}">
+                        <div>
+                            <h3 th:text="${collection.name}">Vestidos de noche</h3>
+                            <p th:text="${collection.description != null and !collection.description.isBlank() ? collection.description : 'Sin descripcion'}">Descripción</p>
+                        </div>
+                        <span th:text="${collection.products != null ? collection.products.size() + ' piezas' : '0 piezas'}">0 piezas</span>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <div class="hub-toolbar">
+            <h2 class="hub-section-title">Tus Piezas</h2>
+            <a th:href="@{/vender/subir-producto}" class="btn-outline" style="text-decoration:none;">+ Nueva pieza</a>
+        </div>
+
+        <!-- Empty state -->
+        <div th:if="${myProducts == null or myProducts.isEmpty()}" class="empty-hub">
+            <span class="empty-icon">🛍</span>
+            <h3>Aún no tienes piezas</h3>
+            <p>Sube tu primera prenda para que la comunidad de Bazarcito la descubra.</p>
+            <a th:href="@{/vender/subir-producto}" class="btn-primary" style="display:inline-flex;text-decoration:none;">
+                Subir mi primera pieza
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Products grid -->
+        <div th:if="${myProducts != null and !myProducts.isEmpty()}" class="hub-product-grid">
+            <div class="hub-product-card" th:each="producto : ${myProducts}">
+                <div class="hub-product-img">
+                    <img th:if="${producto.image != null and (producto.image.startsWith('http') or producto.image.startsWith('/uploads/'))}"
+                         th:src="${producto.image}" th:alt="${producto.name}">
+                    <div class="hub-product-empty-img"
+                         th:if="${producto.image == null or !(producto.image.startsWith('http') or producto.image.startsWith('/uploads/'))}">
+                        Sin imagen
+                    </div>
+                </div>
+                <div class="hub-product-info">
+                    <span class="hub-state-pill available" th:if="${producto.status != null and producto.status.name() == 'AVAILABLE'}">Disponible</span>
+                    <span class="hub-state-pill pending" th:if="${producto.status != null and producto.status.name() == 'PENDING'}">Pendiente</span>
+                    <span class="hub-state-pill sold" th:if="${producto.status != null and producto.status.name() == 'SOLD'}">Vendido</span>
+                    <h4 th:text="${producto.name}">Nombre</h4>
+                    <div class="hub-price" th:text="'$' + ${#numbers.formatDecimal(producto.price,1,'COMMA',0,'POINT')}">$0</div>
+                    <div class="hub-stock" th:text="${(producto.stock ?: 0) + ' en stock'}">0 en stock</div>
+                    <div class="hub-stock" th:text="${producto.collection != null ? 'Coleccion: ' + producto.collection.name : 'Sin coleccion'}">Sin coleccion</div>
+                    <div class="hub-actions-row">
+                        <form th:action="@{/vender/producto/{id}/coleccion(id=${producto.id})}" method="post" class="hub-status-form">
+                            <select class="hub-select" name="collectionId">
+                                <option value="">Sin colección</option>
+                                <option th:each="collection : ${myCollections}"
+                                        th:value="${collection.id}"
+                                        th:selected="${producto.collection != null and producto.collection.id.equals(collection.id)}"
+                                        th:text="${collection.name}">Colección</option>
+                            </select>
+                            <button type="submit" class="hub-btn">Asignar</button>
+                        </form>
+                        <form th:action="@{/vender/producto/{id}/estado(id=${producto.id})}" method="post" class="hub-status-form">
+                            <select class="hub-select" name="status">
+                                <option value="AVAILABLE" th:selected="${producto.status != null and producto.status.name() == 'AVAILABLE'}">Disponible</option>
+                                <option value="PENDING" th:selected="${producto.status != null and producto.status.name() == 'PENDING'}">Pendiente</option>
+                                <option value="SOLD" th:selected="${producto.status != null and producto.status.name() == 'SOLD'}">Vendido</option>
+                            </select>
+                            <button type="submit" class="hub-btn">Guardar</button>
+                        </form>
+                        <form th:action="@{/vender/producto/{id}/eliminar(id=${producto.id})}" method="post" class="hub-delete-form"
+                              data-confirm="Esta pieza se eliminara de tu catalogo."
+                              data-confirm-title="Eliminar pieza"
+                              data-confirm-text="Eliminar">
+                            <button type="submit" class="hub-btn hub-btn-danger">Eliminar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

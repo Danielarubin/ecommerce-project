@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Perfil de Creador - Bazarcito</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <style>
+        body { background: var(--bg-secondary); }
+
+        .onboarding-wrapper {
+            min-height: calc(100vh - 70px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+        }
+
+        .onboarding-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            max-width: 1000px;
+            width: 100%;
+            align-items: center;
+        }
+
+        .onboarding-promo h2 {
+            font-family: var(--font-serif);
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+        }
+        .onboarding-promo h2 em {
+            font-style: normal;
+            color: var(--accent-color);
+        }
+        .onboarding-promo p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+        .promo-perks { display: flex; flex-direction: column; gap: 1rem; }
+        .perk {
+            display: flex; align-items: center; gap: 1rem;
+            font-size: 0.85rem; color: var(--text-dark);
+        }
+        .perk-icon {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: var(--bg-primary); border: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; flex-shrink: 0;
+        }
+
+        .onboarding-card {
+            background: var(--bg-primary);
+            padding: 3rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 24px rgba(42,33,24,0.06);
+        }
+
+        .onboarding-step {
+            font-size: 0.65rem; letter-spacing: 0.15em;
+            text-transform: uppercase; color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        .onboarding-title {
+            font-family: var(--font-serif);
+            font-size: 2.2rem; font-weight: 700;
+            margin-bottom: 0.5rem; line-height: 1.15;
+        }
+        .onboarding-subtitle {
+            font-size: 0.85rem; color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-label {
+            display: block; margin-bottom: 0.4rem;
+            font-size: 0.75rem; letter-spacing: 0.05em;
+            text-transform: uppercase; font-weight: 500; color: var(--text-dark);
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            border-radius: 3px;
+            transition: border-color 0.2s ease;
+            color: var(--text-dark);
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--text-dark);
+            background: var(--bg-primary);
+        }
+        .form-hint {
+            font-size: 0.7rem; color: var(--text-muted);
+            margin-top: 0.3rem; display: block;
+        }
+
+        /* Avatar color picker */
+        .avatar-picker { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.5rem; }
+        .avatar-option {
+            width: 40px; height: 40px; border-radius: 50%;
+            cursor: pointer; border: 3px solid transparent;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+            position: relative;
+        }
+        .avatar-option:hover { transform: scale(1.1); }
+        .avatar-option.selected { border-color: var(--text-dark); }
+        .avatar-option input[type=radio] {
+            position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer;
+        }
+
+        .btn-submit {
+            margin-top: 1.5rem;
+            width: 100%;
+            justify-content: center;
+            padding: 1.1rem;
+            font-size: 0.85rem;
+        }
+
+        .login-link {
+            text-align: center; margin-top: 1.5rem;
+            font-size: 0.8rem; color: var(--text-muted);
+        }
+        .login-link a { color: var(--text-dark); border-bottom: 1px solid var(--text-dark); }
+
+        @media (max-width: 768px) {
+            .onboarding-layout { grid-template-columns: 1fr; gap: 2rem; }
+            .onboarding-promo { display: none; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="nav" style="grid-template-columns: 1fr;">
+        <a class="nav-logo" th:href="@{/}" style="text-align:center;">Baz<span>ar</span>cito</a>
+    </nav>
+
+    <div class="onboarding-wrapper">
+        <div class="onboarding-layout">
+
+            <!-- Columna izquierda — Propuesta de valor -->
+            <div class="onboarding-promo">
+                <h2>Tu espacio <em>editorial</em> en Bazarcito.</h2>
+                <p>Únete como creador independiente y vende tus piezas a una comunidad que valora el diseño con historia.</p>
+                <div class="promo-perks">
+                    <div class="perk">
+                        <span class="perk-icon">✦</span>
+                        <span>Sube tus productos con fotos reales</span>
+                    </div>
+                    <div class="perk">
+                        <span class="perk-icon">🖤</span>
+                        <span>Aparece en la sección de Creadores Destacados</span>
+                    </div>
+                    <div class="perk">
+                        <span class="perk-icon">📦</span>
+                        <span>Gestiona tu inventario desde el dashboard</span>
+                    </div>
+                    <div class="perk">
+                        <span class="perk-icon">💸</span>
+                        <span>Sin comisiones ocultas ni burocracia</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna derecha — Formulario -->
+            <div class="onboarding-card">
+                <div class="onboarding-step">Paso 1 de 1</div>
+                <h1 class="onboarding-title">Crear perfil</h1>
+                <p class="onboarding-subtitle">Completa tu información para activar tu espacio de ventas.</p>
+
+                <form th:action="@{/vender/crear-perfil}" method="POST">
+                    <div class="form-group">
+                        <label class="form-label" for="storeName">Nombre de tu tienda</label>
+                        <input type="text" id="storeName" name="storeName" class="form-control"
+                               required maxlength="50"
+                               placeholder="Ej. Archivo de Daniela"
+                               th:value="${user?.username}">
+                        <span class="form-hint">Este nombre se mostrara en la seccion de tiendas y creadores.</span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="firstName">Nombre</label>
+                            <input type="text" id="firstName" name="firstName" class="form-control"
+                                   placeholder="Tu nombre" th:value="${user?.firstName}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="lastName">Apellido</label>
+                            <input type="text" id="lastName" name="lastName" class="form-control"
+                                   placeholder="Tu apellido" th:value="${user?.lastName}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="location">Ubicación *</label>
+                        <input type="text" id="location" name="location" class="form-control"
+                               required placeholder="Ej. Ciudad de México, Guadalajara..."
+                               th:value="${user?.location}">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="tags">Categorías de tu tienda</label>
+                        <input type="text" id="tags" name="tags" class="form-control"
+                               placeholder="Ej. Vintage, Streetwear, Joyería, Denim"
+                               th:value="${user != null and user.tags != null ? #strings.listJoin(user.tags, ', ') : ''}">
+                        <span class="form-hint">Separa con comas. Estas etiquetas aparecen en tu tarjeta.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Color de tu avatar</label>
+                        <div class="avatar-picker" id="avatarPicker">
+                            <label class="avatar-option selected" style="background:linear-gradient(135deg,#FFD6BA,#FFB38A)" title="Coral">
+                                <input type="radio" name="avatarGradient" value="linear-gradient(135deg,#FFD6BA,#FFB38A)" checked>
+                            </label>
+                            <label class="avatar-option" style="background:linear-gradient(135deg,#DFD0E8,#B8A0CC)" title="Lavanda">
+                                <input type="radio" name="avatarGradient" value="linear-gradient(135deg,#DFD0E8,#B8A0CC)">
+                            </label>
+                            <label class="avatar-option" style="background:linear-gradient(135deg,#C8D8C4,#8FAF88)" title="Sage">
+                                <input type="radio" name="avatarGradient" value="linear-gradient(135deg,#C8D8C4,#8FAF88)">
+                            </label>
+                            <label class="avatar-option" style="background:linear-gradient(135deg,#F4E4C1,#D4A853)" title="Dorado">
+                                <input type="radio" name="avatarGradient" value="linear-gradient(135deg,#F4E4C1,#D4A853)">
+                            </label>
+                            <label class="avatar-option" style="background:linear-gradient(135deg,#C4D4E8,#7A9FC4)" title="Azul">
+                                <input type="radio" name="avatarGradient" value="linear-gradient(135deg,#C4D4E8,#7A9FC4)">
+                            </label>
+                            <label class="avatar-option" style="background:linear-gradient(135deg,#2A2118,#4A3828)" title="Oscuro">
+                                <input type="radio" name="avatarGradient" value="linear-gradient(135deg,#2A2118,#4A3828)">
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary btn-submit">
+                        Activar mi espacio de ventas
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </form>
+
+                <p class="login-link">
+                    ¿Ya tienes cuenta? <a th:href="@{/login}">Inicia sesión</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Avatar picker — visual feedback
+        document.querySelectorAll('.avatar-option').forEach(opt => {
+            opt.addEventListener('click', function() {
+                document.querySelectorAll('.avatar-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+    </script>
+</body>
+</html>
