@@ -36,7 +36,7 @@ public class Product {
     @Column(length = 255)
     private String image;
 
-    @Column(nullable = false, length = 20)
+    @Column(length = 20)
     private ProductStatus status = ProductStatus.AVAILABLE;
 
     @ManyToOne(fetch = FetchType.LAZY)
