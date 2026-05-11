@@ -7,282 +7,7 @@
     <meta name="description" content="Bazarcito — Marketplace editorial de moda independiente. Piezas únicas de creadores mexicanos.">
     <title>Bazarcito — Moda independiente y piezas únicas</title>
     <link rel="stylesheet" th:href="@{/css/index.css}">
-    <style>
-        body {
-            background: #F5F0E7;
-        }
-
-        .subnav {
-            background: #FFFDF9;
-            box-shadow: inset 0 -1px 0 rgba(42,33,24,0.04);
-        }
-
-        .hero-wrapper {
-            padding: 3.5rem clamp(1.25rem, 4vw, 4.5rem) 5rem;
-            background:
-                linear-gradient(140deg, rgba(255,179,138,0.18), rgba(255,255,255,0) 38%),
-                #FFFDF9;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .hero {
-            max-width: 1440px;
-            margin: 0 auto;
-            gap: clamp(2rem, 4vw, 4rem);
-            grid-template-columns: minmax(430px, 0.95fr) minmax(560px, 1.05fr);
-        }
-
-        .hero-title {
-            max-width: 660px;
-            font-size: clamp(3.4rem, 5.4vw, 5.4rem);
-            line-height: 0.96;
-            overflow-wrap: normal;
-        }
-
-        .hero-title em {
-            margin-left: 0.9rem;
-        }
-
-        .hero-desc {
-            max-width: 430px;
-            font-size: 1rem;
-        }
-
-        .hero-images > div {
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background:
-                linear-gradient(135deg, rgba(255,179,138,0.18), rgba(42,33,24,0.04)),
-                #EEE4D6;
-            box-shadow: 0 18px 45px rgba(42,33,24,0.08);
-        }
-
-        .hero-empty {
-            height: 100%;
-            display: grid;
-            place-items: center;
-            color: var(--text-muted);
-            font-size: 0.7rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-        }
-
-        /* ── HERO STATS ──────────────────────────────────── */
-        .hero-stats {
-            display: flex;
-            gap: 2.5rem;
-            margin-top: 2rem;
-            margin-left: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border-color);
-        }
-        .stat { display: flex; flex-direction: column; }
-        .stat-num {
-            font-family: var(--font-serif);
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            line-height: 1;
-        }
-        .stat-label {
-            font-size: 0.65rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-top: 0.3rem;
-        }
-
-        /* ── PRODUCT GRID DINÁMICO ───────────────────────── */
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 1.5rem;
-            margin-top: 3rem;
-        }
-        .product-card-dynamic {
-            cursor: pointer;
-            position: relative;
-            background: #FFFDF9;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0.75rem;
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-        }
-        .product-card-dynamic:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 14px 32px rgba(42,33,24,0.08);
-        }
-        .product-card-dynamic .e-img {
-            height: auto;
-            aspect-ratio: 4 / 5;
-            overflow: hidden;
-            border-radius: 6px;
-            background: var(--bg-secondary);
-            position: relative;
-        }
-        .product-card-dynamic .e-img img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.6s cubic-bezier(0.2,0.8,0.2,1);
-        }
-        .product-card-dynamic:hover .e-img img { transform: scale(1.05); }
-        .product-card-dynamic:hover .btn-fav,
-        .product-card-dynamic:hover .btn-add-cart { opacity: 1; transform: translateY(0) translateX(-50%); }
-        .product-card-dynamic:hover .btn-fav { transform: translateY(0); }
-        .badge-new {
-            position: absolute; top: 1rem; left: 1rem;
-            background: var(--text-dark); color: var(--bg-primary);
-            font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
-            padding: 0.25rem 0.6rem; border-radius: 2px; z-index: 5;
-        }
-        .product-card-dynamic .e-info {
-            padding: 0.2rem 0.1rem 0.1rem;
-        }
-
-        /* ── TOAST NOTIFICATION ──────────────────────────── */
-        .toast-container {
-            position: fixed; bottom: 2rem; left: 50%;
-            transform: translateX(-50%);
-            z-index: 999; display: flex; flex-direction: column;
-            gap: 0.75rem; align-items: center; pointer-events: none;
-        }
-        .toast {
-            background: var(--text-dark); color: var(--bg-primary);
-            padding: 0.9rem 1.8rem; border-radius: 100px;
-            font-size: 0.85rem; font-weight: 400;
-            box-shadow: 0 8px 24px rgba(42,33,24,0.2);
-            opacity: 0; transform: translateY(20px);
-            transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
-            pointer-events: auto;
-            display: flex; align-items: center; gap: 0.6rem;
-        }
-        .toast.show { opacity: 1; transform: translateY(0); }
-        .toast.accent { background: var(--accent-color); color: white; }
-
-        /* ── SECTION DIVIDER ─────────────────────────────── */
-        .section-divider {
-            display: flex; align-items: center; gap: 2rem;
-            padding: 0 2.5rem; margin: 4rem 0 0;
-        }
-        .section-divider::before, .section-divider::after {
-            content: ''; flex: 1; height: 1px; background: var(--border-color);
-        }
-        .section-divider span {
-            font-size: 0.65rem; letter-spacing: 0.15em;
-            text-transform: uppercase; color: var(--text-muted); white-space: nowrap;
-        }
-
-        /* ── CTA BANNER ──────────────────────────────────── */
-        .cta-banner {
-            max-width: none;
-            width: 100%;
-            margin: 5rem 0;
-            background: var(--text-dark);
-            border-radius: 0;
-            padding: 4.5rem clamp(2rem, 8vw, 7rem);
-            display: grid;
-            grid-template-columns: 1fr auto;
-            align-items: center;
-            gap: 3rem;
-            position: relative;
-            overflow: hidden;
-        }
-        .cta-banner::before {
-            content: 'VENDE';
-            position: absolute; right: 0; top: 50%;
-            transform: translateY(-50%);
-            font-family: var(--font-serif);
-            font-size: 12rem; font-weight: 800; letter-spacing: -0.05em;
-            color: rgba(255,255,255,0.04);
-            pointer-events: none; white-space: nowrap;
-            line-height: 1;
-        }
-        .cta-banner-title {
-            font-family: var(--font-serif);
-            font-size: 2.8rem; font-weight: 700; line-height: 1.15;
-            color: var(--bg-primary); letter-spacing: -0.03em;
-        }
-        .cta-banner-title em { color: var(--accent-color); font-style: normal; }
-        .cta-banner-sub {
-            font-size: 0.9rem; color: rgba(253,250,246,0.6);
-            margin-top: 0.75rem; max-width: 400px; line-height: 1.6;
-        }
-        .btn-primary-light {
-            display: inline-flex; align-items: center; gap: 0.6rem;
-            padding: 1rem 2rem;
-            background: var(--bg-primary); color: var(--text-dark);
-            font-size: 0.75rem; letter-spacing: 0.1em;
-            text-transform: uppercase; font-weight: 500;
-            border-radius: 2px; white-space: nowrap;
-            transition: transform 0.3s ease, background 0.3s ease;
-            position: relative; z-index: 1;
-        }
-        .btn-primary-light:hover { transform: translateY(-2px); background: var(--accent-color); color: white; }
-
-        /* ── CREATORS REAL ───────────────────────────────── */
-        .creator-card-real {
-            background: var(--bg-primary);
-            padding: 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            min-height: 100%;
-        }
-        .creator-card-real:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 16px 40px rgba(42,33,24,0.08);
-        }
-        .creator-first-product {
-            aspect-ratio: 4 / 3;
-            overflow: hidden;
-            border-radius: 6px;
-            margin-bottom: 1.25rem;
-            background: var(--bg-secondary);
-        }
-        .creator-first-product img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.6s ease;
-        }
-        .creator-card-real:hover .creator-first-product img { transform: scale(1.05); }
-        .creator-card-real .creator-header {
-            padding: 0 0.35rem;
-        }
-        .creator-card-real .creator-footer {
-            margin-top: auto;
-            padding: 1rem 0.35rem 0.15rem;
-        }
-        .featured,
-        .creators,
-        .about-section {
-            position: relative;
-        }
-        .featured > *,
-        .creators > *,
-        .about-section > * {
-            max-width: 1440px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* empty state */
-        .empty-state {
-            grid-column: 1/-1; text-align: center;
-            padding: 5rem 2rem; color: var(--text-muted);
-        }
-        .empty-state h3 { font-family: var(--font-serif); font-size: 2rem; margin-bottom: 1rem; color: var(--text-dark); }
-
-        @media(max-width: 768px) {
-            .hero-wrapper { padding: 2rem 1rem 3rem; }
-            .hero { grid-template-columns: 1fr; }
-            .hero-desc, .hero-actions, .hero-stats { margin-left: 0; }
-            .cta-banner { grid-template-columns: 1fr; padding: 3rem 1.25rem; margin: 3rem 0; }
-            .cta-banner-title { font-size: 2rem; }
-            .hero-stats { flex-wrap: wrap; gap: 1.5rem; }
-            .featured, .creators { padding-left: 1rem; padding-right: 1rem; }
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/pages/home.css}">
 </head>
 
 <body>
@@ -296,6 +21,7 @@
             <a th:href="@{/colecciones}">Colecciones</a>
             <a th:href="@{/creadores}">Creadores</a>
             <a th:href="@{/tiendas}">Tiendas</a>
+            <a href="#sobre-nosotros" class="nav-about-link" onclick="scrollToAbout(event)">Sobre nosotros</a>
         </div>
         <a class="nav-logo" th:href="@{/}">Baz<span>ar</span>cito</a>
         <div class="nav-right">
@@ -320,14 +46,7 @@
         </div>
     </nav>
 
-    <!-- ══ SUBNAV ══ -->
-    <div class="subnav">
-        <a th:href="@{/colecciones}">Tendencias</a>
-        <a th:href="@{/colecciones}">Vintage</a>
-        <a th:href="@{/colecciones}">Streetwear</a>
-        <a th:href="@{/colecciones}" class="hot">Más vendidos ✦</a>
-        <a th:href="@{/colecciones}">Recomendaciones</a>
-    </div>
+
 
     <!-- ══ HERO ══ -->
     <div class="hero-wrapper">
@@ -408,14 +127,16 @@
                  th:data-price="${prod.price}"
                  th:data-image="${prod.image}"
                  th:data-status="${prod.status}"
+                 th:data-sizes="${prod.sizes != null and !prod.sizes.isEmpty() ? #strings.listJoin(prod.sizes, ',') : ''}"
                  th:onclick="|window.location.href='@{/product/{id}(id=${prod.id})}'|">
-                <div class="e-img">
-                    <span class="badge-new" th:if="${iterStat.index < 2}">Nuevo</span>
+                <div class="e-img" th:style="${prod.stock <= 0 or prod.status.name() == 'SOLD'} ? 'opacity: 0.6;' : ''">
+                    <span class="badge-new" th:if="${iterStat.index < 2 and prod.stock > 0 and prod.status.name() != 'SOLD'}">Nuevo</span>
+                    <span class="badge-new" th:if="${prod.stock <= 0 or prod.status.name() == 'SOLD'}" style="background:var(--text-muted); color:white;">Agotado</span>
                     <!-- Solo se muestran imagenes remotas guardadas en BD -->
                     <img th:if="${prod.image != null and (prod.image.startsWith('http') or prod.image.startsWith('/uploads/'))}"
                          th:src="${prod.image}" th:alt="${prod.name}">
                     <button class="btn-fav" aria-label="Agregar a favoritos">🤍</button>
-                    <button class="btn-add-cart">Añadir a bolsa</button>
+                    <button class="btn-add-cart" th:if="${prod.stock > 0 and prod.status.name() != 'SOLD'}">Añadir a bolsa</button>
                 </div>
                 <div class="e-info">
                     <div>
@@ -636,10 +357,10 @@
             <div class="f-col">
                 <div class="f-col-title">Asistencia</div>
                 <ul>
-                    <li><a href="#">FAQ</a></li>
-                    <li><a href="#">Envíos</a></li>
-                    <li><a href="#">Devoluciones</a></li>
-                    <li><a href="#">Contacto</a></li>
+                    <li><a th:href="@{/faq}">FAQ</a></li>
+                    <li><a th:href="@{/envios}">Envíos</a></li>
+                    <li><a th:href="@{/devoluciones}">Devoluciones</a></li>
+                    <li><a th:href="@{/contacto}">Contacto</a></li>
                 </ul>
             </div>
         </div>
@@ -681,6 +402,15 @@
     <div id="drawerOverlay" class="drawer-overlay"></div>
 
     <script th:src="@{/js/app.js}"></script>
+    <script>
+        function scrollToAbout(e) {
+            e.preventDefault();
+            const target = document.getElementById('sobre-nosotros');
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    </script>
     <script>
         // Toast helper global
         window.showToast = function(msg, type) {

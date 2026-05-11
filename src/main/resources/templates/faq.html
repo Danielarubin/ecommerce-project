@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Preguntas frecuentes sobre Bazarcito — compras, envíos, devoluciones y más.">
+    <title>FAQ — Bazarcito</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" th:href="@{/css/pages/info-pages.css}">
+</head>
+<body>
+
+    <!-- ══ NAVBAR ══ -->
+    <nav class="nav">
+        <div class="nav-links">
+            <a th:href="@{/colecciones}">Colecciones</a>
+            <a th:href="@{/creadores}">Creadores</a>
+            <a th:href="@{/tiendas}">Tiendas</a>
+            <a th:href="@{/}+'#sobre-nosotros'">Sobre nosotros</a>
+        </div>
+        <a class="nav-logo" th:href="@{/}">Baz<span>ar</span>cito</a>
+        <div class="nav-right">
+            <a th:href="@{/vender}" class="nav-action">Vender</a>
+            <span class="nav-action" id="btnSearch" role="button" aria-label="Buscar">Buscar</span>
+            <a th:href="@{/favoritos}" class="nav-action" style="font-size:1.1rem;text-decoration:none;" aria-label="Favoritos">🤍</a>
+            <a sec:authorize="isAnonymous()" th:href="@{/login}" class="nav-action">Acceder</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/dashboard}" class="nav-action">Mi Cuenta</a>
+            <div class="nav-cart" id="btnCart" role="button" aria-label="Carrito">
+                <span class="nav-action">Bolsa</span>
+                <div style="position:relative;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                    <span id="cartBadge" class="cart-badge" style="display:none;">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ══ PAGE HERO ══ -->
+    <div class="info-hero">
+        <div class="info-hero-inner">
+            <span class="sec-ey">Asistencia</span>
+            <h1 class="info-hero-title">Preguntas <em>Frecuentes</em></h1>
+            <p class="info-hero-desc">Todo lo que necesitas saber sobre compras, envíos, pagos y más.</p>
+        </div>
+    </div>
+
+    <!-- ══ CONTENT ══ -->
+    <div class="info-layout">
+
+        <!-- Sidebar de categorías -->
+        <aside class="info-sidebar">
+            <nav class="info-sidenav" aria-label="Categorías FAQ">
+                <a href="#compras" class="info-sidenav-link active">Compras</a>
+                <a href="#pagos" class="info-sidenav-link">Pagos</a>
+                <a href="#envios" class="info-sidenav-link">Envíos</a>
+                <a href="#devoluciones" class="info-sidenav-link">Devoluciones</a>
+                <a href="#cuenta" class="info-sidenav-link">Mi Cuenta</a>
+                <a href="#vendedores" class="info-sidenav-link">Vendedores</a>
+            </nav>
+        </aside>
+
+        <!-- Acordeón de preguntas -->
+        <main class="info-main">
+
+            <section class="faq-group" id="compras">
+                <h2 class="faq-group-title">Compras</h2>
+
+                <div class="faq-item">
+                    <button class="faq-q" aria-expanded="false">
+                        ¿Cómo realizo una compra en Bazarcito?
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Explora el catálogo, elige la pieza que te guste y agrégala a tu bolsa. Cuando estés listo, ve al checkout, ingresa tus datos de envío y elige tu método de pago. Recibirás una confirmación por correo electrónico en cuanto se procese tu pedido.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-q" aria-expanded="false">
+                        ¿Puedo comprar sin crear una cuenta?
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Sí. Puedes agregar productos a tu bolsa y completar el checkout sin registrarte. Sin embargo, crear una cuenta te permite rastrear tus pedidos, guardar favoritos y acceder a tu historial de compras.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-q" aria-expanded="false">
+                        ¿Los productos son nuevos o de segunda mano?
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Todos los productos en Bazarcito son nuevos. Cada pieza es publicada directamente por el creador o tienda independiente que la produce o selecciona. Si tienes dudas sobre el estado de un artículo específico, puedes contactar al vendedor desde la página del producto.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-q" aria-expanded="false">
+                        ¿Qué significa "edición limitada"?
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Muchos creadores producen sus piezas en cantidades muy pequeñas. Cuando un producto se marca como edición limitada, significa que no habrá reposición una vez agotado el stock. Te recomendamos no esperar demasiado si algo te gusta.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="faq-group" id="pagos">
+                <h2 class="faq-group-title">Pagos</h2>
+
+                <div class="faq-item">
+                    <button class="faq-q" aria-expanded="false">
+                        ¿Qué métodos de pago aceptan?
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Actualmente aceptamos tarjetas de crédito y débito (Visa, Mastercard, American Express) y transferencia bancaria. Próximamente habilitaremos pagos con OXXO Pay y otras opciones locales.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-q" aria-expanded="false">
+                        ¿Es seguro pagar en Bazarcito?
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Sí. Todas las transacciones se procesan a través de pasarelas de pago certificadas con cifrado SSL. Nunca almacenamos los datos de tu tarjeta en nuestros servidores.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-q" aria-expanded="false">
+                        ¿Puedo pagar en mensualidades?
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Las opciones de meses sin intereses dependen del banco emisor de tu tarjeta. Bazarcito no cobra comisiones adicionales por pagos a meses, pero te recomendamos verificar con tu banco las condiciones aplicables.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="faq-group" id="envios">
+                <h2 class="faq-group-title">Envíos</h2>
+
+                <div class="faq-item">
+                    <button class="faq-q" aria-expanded="false">
+                        ¿A dónde hacen envíos?
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Realizamos envíos a toda la República Mexicana. Cada vendedor gestiona sus propios envíos, por lo que los tiempos y costos pueden variar según la tienda y tu ubicación.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-q" aria-expanded="false">
+                        ¿Cuánto tarda en llegar mi pedido?
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>El tiempo estimado de entrega es de 3 a 7 días hábiles para la mayoría de las ciudades principales. Zonas remotas pueden tomar hasta 10 días hábiles. Recibirás un número de rastreo una vez que tu pedido sea enviado.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-q" aria-expanded="false">
+                        ¿Cuánto cuesta el envío?
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>El costo de envío se calcula al momento del checkout según tu código postal y el peso del paquete. Algunos vendedores ofrecen envío gratuito a partir de cierto monto de compra, lo cual se indica en la página del producto.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-q" aria-expanded="false">
+                        ¿Cómo rastro mi pedido?
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Una vez que el vendedor envíe tu pedido, recibirás un correo con el número de guía y el enlace de rastreo de la paquetería. También puedes consultar el estado desde la sección "Mis Pedidos" en tu cuenta.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="faq-group" id="devoluciones">
+                <h2 class="faq-group-title">Devoluciones</h2>
+
+                <div class="faq-item">
+                    <button class="faq-q" aria-expanded="false">
+                        ¿Puedo devolver un producto?
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Sí. Tienes hasta 15 días naturales a partir de la recepción del pedido para solicitar una devolución, siempre que el producto esté en su estado original, sin uso y con etiquetas. Consulta nuestra <a th:href="@{/devoluciones}" style="border-bottom:1px solid currentColor;">política completa de devoluciones</a>.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-q" aria-expanded="false">
+                        ¿Qué hago si recibí un producto dañado o incorrecto?
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Contáctanos dentro de las 48 horas siguientes a la recepción con fotos del producto y tu número de pedido. Gestionaremos el reemplazo o reembolso sin costo adicional para ti.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="faq-group" id="cuenta">
+                <h2 class="faq-group-title">Mi Cuenta</h2>
+
+                <div class="faq-item">
+                    <button class="faq-q" aria-expanded="false">
+                        ¿Cómo cambio mi contraseña?
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Desde tu panel de cuenta, ve a "Configuración" y selecciona "Cambiar contraseña". Si olvidaste tu contraseña, usa la opción "¿Olvidaste tu contraseña?" en la pantalla de inicio de sesión.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-q" aria-expanded="false">
+                        ¿Cómo elimino mi cuenta?
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Para eliminar tu cuenta, escríbenos a través del formulario de <a th:href="@{/contacto}" style="border-bottom:1px solid currentColor;">contacto</a> con el asunto "Eliminar cuenta". Procesaremos tu solicitud en un plazo de 5 días hábiles.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="faq-group" id="vendedores">
+                <h2 class="faq-group-title">Vendedores</h2>
+
+                <div class="faq-item">
+                    <button class="faq-q" aria-expanded="false">
+                        ¿Cómo me convierto en vendedor?
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Regístrate en Bazarcito y completa tu perfil de creador desde la sección <a th:href="@{/vender}" style="border-bottom:1px solid currentColor;">Vender</a>. El proceso toma menos de 5 minutos y no tiene costo de alta.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-q" aria-expanded="false">
+                        ¿Bazarcito cobra comisión por venta?
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Actualmente Bazarcito no cobra comisión por venta. Creemos que el creador debe quedarse con el valor íntegro de su trabajo. En el futuro podríamos introducir planes opcionales con beneficios adicionales, pero siempre con transparencia total.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-q" aria-expanded="false">
+                        ¿Qué tipo de productos puedo vender?
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Bazarcito está enfocado en moda independiente, accesorios, piezas artesanales y diseño textil. No se permiten productos de reventa masiva, fast fashion o artículos que no cumplan con nuestras guías de comunidad.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CTA al final -->
+            <div class="info-cta-block">
+                <p>¿No encontraste lo que buscabas?</p>
+                <a th:href="@{/contacto}" class="btn-primary">
+                    Contáctanos
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ══ FOOTER ══ -->
+    <footer class="footer">
+        <div class="f-grid">
+            <div>
+                <div class="f-logo">Baz<span>ar</span>cito</div>
+                <p class="f-desc">Marketplace editorial para creadores independientes y piezas que importan.</p>
+            </div>
+            <div class="f-col">
+                <div class="f-col-title">Explorar</div>
+                <ul>
+                    <li><a th:href="@{/colecciones}">Colecciones</a></li>
+                    <li><a th:href="@{/creadores}">Creadores</a></li>
+                    <li><a th:href="@{/tiendas}">Tiendas</a></li>
+                    <li><a th:href="@{/favoritos}">Favoritos</a></li>
+                </ul>
+            </div>
+            <div class="f-col">
+                <div class="f-col-title">Vender</div>
+                <ul>
+                    <li><a th:href="@{/vender}">Abrir tu tienda</a></li>
+                    <li><a th:href="@{/register}">Registrarse</a></li>
+                    <li><a th:href="@{/login}">Iniciar sesión</a></li>
+                </ul>
+            </div>
+            <div class="f-col">
+                <div class="f-col-title">Asistencia</div>
+                <ul>
+                    <li><a th:href="@{/faq}" class="active">FAQ</a></li>
+                    <li><a th:href="@{/envios}">Envíos</a></li>
+                    <li><a th:href="@{/devoluciones}">Devoluciones</a></li>
+                    <li><a th:href="@{/contacto}">Contacto</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="f-bot">
+            <span>© 2025 Bazarcito.</span>
+            <div class="f-leg">
+                <a href="#">Privacidad</a>
+                <a href="#">Términos</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ══ SEARCH OVERLAY ══ -->
+    <div id="searchOverlay" class="search-overlay">
+        <div class="search-header">
+            <input type="text" id="searchInput" placeholder="Buscar piezas, creadores...">
+            <button id="btnCloseSearch" class="btn-close">&times;</button>
+        </div>
+        <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <!-- ══ CART DRAWER ══ -->
+    <div id="cartDrawer" class="cart-drawer">
+        <div class="cart-header">
+            <h3>Tu Bolsa</h3>
+            <button id="btnCloseCart" class="btn-close">&times;</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="cart-empty" id="cartEmpty">Tu bolsa está vacía.</div>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total</span>
+                <span id="cartTotalValue">$0</span>
+            </div>
+            <a th:href="@{/checkout}" class="btn-primary" style="width:100%;justify-content:center;text-decoration:none;">Proceder al pago</a>
+        </div>
+    </div>
+    <div id="drawerOverlay" class="drawer-overlay"></div>
+
+    <script th:src="@{/js/app.js}"></script>
+    <script>
+        // Acordeón FAQ
+        document.querySelectorAll('.faq-q').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.closest('.faq-item');
+                const isOpen = item.classList.contains('open');
+                document.querySelectorAll('.faq-item.open').forEach(el => {
+                    el.classList.remove('open');
+                    el.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+                });
+                if (!isOpen) {
+                    item.classList.add('open');
+                    btn.setAttribute('aria-expanded', 'true');
+                }
+            });
+        });
+
+        // Sidebar active link on scroll
+        const groups = document.querySelectorAll('.faq-group');
+        const sideLinks = document.querySelectorAll('.info-sidenav-link');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    sideLinks.forEach(l => l.classList.remove('active'));
+                    const link = document.querySelector('.info-sidenav-link[href="#' + entry.target.id + '"]');
+                    if (link) link.classList.add('active');
+                }
+            });
+        }, { rootMargin: '-30% 0px -60% 0px' });
+        groups.forEach(g => observer.observe(g));
+    </script>
+</body>
+</html>

@@ -4,147 +4,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orden Confirmada - Bazar</title>
+    <title>Orden Confirmada — Bazarcito</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/index.css}">
-    <style>
-        .success-wrapper {
-            min-height: calc(100vh - 70px);
-            display: grid;
-            place-items: center;
-            padding: clamp(2rem, 5vw, 5rem);
-            background:
-                linear-gradient(135deg, rgba(255,179,138,0.18), rgba(255,255,255,0) 44%),
-                var(--bg-primary);
-        }
-        .success-card {
-            width: min(920px, 100%);
-            padding: clamp(2rem, 5vw, 4.5rem);
-            background: rgba(253, 250, 246, 0.92);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            display: grid;
-            grid-template-columns: 0.95fr 1.05fr;
-            gap: clamp(2rem, 5vw, 4rem);
-            align-items: center;
-            box-shadow: 0 24px 70px rgba(42, 33, 24, 0.08);
-        }
-        .success-icon {
-            width: 94px;
-            height: 94px;
-            border-radius: 50%;
-            display: grid;
-            place-items: center;
-            background: var(--text-dark);
-            color: var(--bg-primary);
-            font-family: var(--font-serif);
-            font-size: 2.7rem;
-            margin-bottom: 1.75rem;
-        }
-        .success-title {
-            font-family: var(--font-serif);
-            font-size: clamp(2.6rem, 6vw, 5rem);
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 1rem;
-            line-height: 0.98;
-            letter-spacing: 0;
-        }
-        .success-title em {
-            font-style: normal;
-            font-weight: 800;
-            color: var(--accent-color);
-        }
-        .success-desc {
-            color: #625447;
-            font-size: 1.02rem;
-            margin-bottom: 2rem;
-            line-height: 1.75;
-        }
-        .success-next {
-            border-left: 1px solid var(--border-color);
-            padding-left: clamp(1.5rem, 4vw, 3rem);
-        }
-        .success-kicker {
-            display: block;
-            font-size: 0.68rem;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 1rem;
-        }
-        .success-steps {
-            display: grid;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .success-step {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 0.85rem;
-            align-items: start;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .success-step strong {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: grid;
-            place-items: center;
-            background: var(--bg-secondary);
-            font-size: 0.78rem;
-        }
-        .success-step span {
-            color: #625447;
-            line-height: 1.6;
-            font-size: 0.95rem;
-        }
-        @media (max-width: 760px) {
-            .success-card {
-                grid-template-columns: 1fr;
-            }
-            .success-next {
-                border-left: 0;
-                padding-left: 0;
-                border-top: 1px solid var(--border-color);
-                padding-top: 2rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/pages/success.css}">
 </head>
 
 <body>
-    <!-- MINIMAL NAVBAR -->
-    <nav class="nav" style="grid-template-columns: 1fr;">
-        <a class="nav-logo" th:href="@{/}" style="text-align: center;">Baz<span>ar</span>cito</a>
+
+    <!-- NAV -->
+    <nav class="s-nav">
+        <a class="s-nav-logo" th:href="@{/}">Baz<span>ar</span>cito</a>
     </nav>
 
-    <div class="success-wrapper">
-        <div class="success-card">
-            <div>
-                <div class="success-icon">✓</div>
-                <h1 class="success-title">Orden <br><em>Confirmada</em></h1>
-                <p class="success-desc">Gracias por apoyar el diseño independiente. Tu compra quedo registrada y preparamos los detalles para que el creador pueda darle seguimiento.</p>
-                <a th:href="@{/}" class="btn-primary" style="display: inline-flex; text-decoration: none;">Seguir Explorando</a>
+    <!-- MAIN -->
+    <main class="success-page">
+
+        <!-- LEFT — Confirmación -->
+        <div class="s-left">
+            <div class="check-ring">
+                <div class="check-inner">
+                    <svg class="check-svg" viewBox="0 0 24 24">
+                        <polyline points="4 12 9 17 20 6"/>
+                    </svg>
+                </div>
             </div>
-            <div class="success-next">
-                <span class="success-kicker">Siguientes pasos</span>
-                <div class="success-steps">
-                    <div class="success-step">
-                        <strong>1</strong>
-                        <span>Recibiras la confirmacion de tu pedido con el resumen de las piezas compradas.</span>
+
+            <span class="s-eyebrow">Orden Confirmada</span>
+            <h1 class="s-title">Tu compra<br>está en<br><em>camino.</em></h1>
+            <p class="s-desc">Gracias por apoyar el diseño independiente. Tu pedido quedó registrado y el creador recibirá los detalles para darte seguimiento pronto.</p>
+
+            <a th:href="@{/}" class="s-btn">
+                Seguir explorando
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+
+            <div class="s-order-id">
+                Número de referencia
+                <strong>#BZR-<span th:text="${#dates.format(#dates.createNow(), 'yyMMddHH')}">2505110</span></strong>
+            </div>
+        </div>
+
+        <!-- RIGHT — Pasos -->
+        <div class="s-right">
+            <span class="s-kicker">¿Qué sigue?</span>
+
+            <div class="progress-track">
+
+                <div class="progress-step">
+                    <div class="p-col">
+                        <div class="p-dot done">✓</div>
+                        <div class="p-line"></div>
                     </div>
-                    <div class="success-step">
-                        <strong>2</strong>
-                        <span>El creador preparara tu paquete y actualizara el seguimiento cuando este listo.</span>
+                    <div class="p-content">
+                        <div class="p-label">Orden recibida</div>
+                        <div class="p-sub">Tu pedido fue registrado exitosamente en nuestro sistema.</div>
                     </div>
-                    <div class="success-step">
-                        <strong>3</strong>
-                        <span>Conserva esta pantalla como referencia mientras seguimos afinando el historial de compras.</span>
+                </div>
+
+                <div class="progress-step">
+                    <div class="p-col">
+                        <div class="p-dot active">2</div>
+                        <div class="p-line"></div>
                     </div>
+                    <div class="p-content">
+                        <div class="p-label">Preparando tu paquete</div>
+                        <div class="p-sub">El creador está revisando tu pedido y preparando las piezas con cuidado.</div>
+                    </div>
+                </div>
+
+                <div class="progress-step">
+                    <div class="p-col">
+                        <div class="p-dot pending">3</div>
+                        <div class="p-line"></div>
+                    </div>
+                    <div class="p-content">
+                        <div class="p-label muted">En camino</div>
+                        <div class="p-sub">Tu paquete será enviado con número de rastreo una vez listo.</div>
+                    </div>
+                </div>
+
+                <div class="progress-step">
+                    <div class="p-col">
+                        <div class="p-dot pending">4</div>
+                    </div>
+                    <div class="p-content">
+                        <div class="p-label muted">Entregado</div>
+                        <div class="p-sub">Recibirás tu pieza única directo en la puerta.</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Info chips -->
+            <div class="s-chips">
+                <div class="s-chip">
+                    <span class="s-chip-icon">📦</span>
+                    Envío nacional
+                </div>
+                <div class="s-chip">
+                    <span class="s-chip-icon">🎨</span>
+                    Diseño independiente
+                </div>
+                <div class="s-chip">
+                    <span class="s-chip-icon">🤍</span>
+                    Hecho con intención
                 </div>
             </div>
         </div>
-    </div>
+
+    </main>
+
 </body>
 </html>

@@ -929,14 +929,51 @@ svg {
 }
 
 @media (max-width: 768px) {
+    /* NAVBAR — iconos compactos */
     .nav {
-        grid-template-columns: auto 1fr;
+        grid-template-columns: 1fr auto 1fr;
+        padding: 0 1rem;
+        height: 60px;
     }
 
     .nav-links {
-        display: none;
+        display: none; /* Ocultar links de texto */
     }
 
+    .nav-right {
+        gap: 0.75rem;
+    }
+
+    /* En móvil reducir texto de "Bolsa", "Buscar", "Vender" */
+    .nav-right .nav-action:not(#btnSearch):not([aria-label]) {
+        font-size: 0;  /* Oculta el texto */
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .nav-right .nav-action:not(#btnSearch):not([aria-label])::before {
+        font-size: 0.7rem; /* No mostrar nada, los íconos SVG permanecen */
+    }
+
+    /* Mantener visibles: ícono de carrito, favoritos, buscar */
+    #btnSearch {
+        font-size: 0;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #btnSearch::before {
+        content: '🔍';
+        font-size: 1rem;
+    }
+
+    /* Hero */
     .hero {
         grid-template-columns: 1fr;
         min-height: auto;
@@ -954,6 +991,7 @@ svg {
         font-size: 3rem;
     }
 
+    /* Grids editorial */
     .editorial-grid {
         display: flex;
         flex-direction: column;
@@ -994,7 +1032,45 @@ svg {
         gap: 1rem;
         text-align: center;
     }
+
+    /* Hero wrapper */
+    .hero-wrapper {
+        padding: 1.5rem 1.25rem 3rem;
+    }
+
+    .featured {
+        padding: 4rem 1.25rem 3rem;
+    }
+
+    .creators {
+        padding: 4rem 1.25rem;
+    }
 }
+
+/* ── Extra small: 480px ───────────────────────── */
+@media (max-width: 480px) {
+    .nav-logo {
+        font-size: 1.6rem;
+    }
+
+    .hero-title {
+        font-size: 2.4rem;
+    }
+
+    .sec-title {
+        font-size: 2.4rem;
+    }
+
+    .editorial-grid-row2 {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-wrapper {
+        padding: 1rem 1rem 2.5rem;
+    }
+}
+
+
 
 /* ── SEARCH, CART & FAVORITES OVERLAYS ───────────────────────── */
 .drawer-overlay {

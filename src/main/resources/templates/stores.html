@@ -6,58 +6,7 @@
     <meta name="description" content="Explora las tiendas independientes de Bazarcito — espacios únicos de diseñadores mexicanos.">
     <title>Tiendas — Bazarcito</title>
     <link rel="stylesheet" th:href="@{/css/index.css}">
-    <style>
-        body { background: #F5F0E7; }
-        .page-hero {
-            padding: 8rem 2.5rem 3.5rem;
-            border-bottom: 1px solid var(--border-color);
-            background:
-                linear-gradient(120deg, rgba(255,179,138,0.18), rgba(255,255,255,0) 42%),
-                var(--bg-primary);
-        }
-        .page-hero-inner {
-            max-width: 1180px;
-            margin: 0 auto;
-            display: flex; justify-content: space-between; align-items: flex-end;
-            flex-wrap: wrap; gap: 1.5rem;
-        }
-        .creator-count {
-            font-size: 0.8rem; color: var(--text-muted); letter-spacing: 0.08em;
-            text-transform: uppercase;
-        }
-        .creator-card {
-            border-radius: 8px;
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            overflow: hidden;
-        }
-        .creator-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 14px 34px rgba(42,33,24,0.08);
-        }
-        .empty-section {
-            text-align: center; padding: 8rem 2rem; grid-column: 1 / -1;
-        }
-        .empty-section .empty-icon { font-size: 3rem; margin-bottom: 1.5rem; display: block; opacity: 0.4; }
-        .empty-section h3 {
-            font-family: var(--font-serif); font-size: 2rem; font-weight: 700;
-            color: var(--text-dark); margin-bottom: 0.75rem;
-        }
-        .empty-section p {
-            color: var(--text-muted); font-size: 0.9rem;
-            max-width: 360px; margin: 0 auto 2rem; line-height: 1.7;
-        }
-        .product-count-badge {
-            display: inline-flex; align-items: center; gap: 0.3rem;
-            background: var(--bg-secondary); border: 1px solid var(--border-color);
-            border-radius: 100px; padding: 0.2rem 0.7rem;
-            font-size: 0.65rem; letter-spacing: 0.1em;
-            text-transform: uppercase; color: var(--text-muted);
-        }
-        .creator-meta span { color: var(--text-muted); }
-        .creator-showcase > div { border-radius: 6px; overflow: hidden; }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/pages/store.css}">
 </head>
 <body>
     <!-- NAVBAR -->
@@ -66,6 +15,7 @@
             <a th:href="@{/colecciones}">Colecciones</a>
             <a th:href="@{/creadores}">Creadores</a>
             <a th:href="@{/tiendas}" class="active">Tiendas</a>
+            <a th:href="@{/}+'#sobre-nosotros'">Sobre nosotros</a>
         </div>
         <a class="nav-logo" th:href="@{/}">Baz<span>ar</span>cito</a>
         <div class="nav-right">
@@ -200,6 +150,22 @@
                     <li><a th:href="@{/vender}">Abrir tienda</a></li>
                     <li><a th:href="@{/register}">Registrarse</a></li>
                 </ul>
+            </div>
+            <div class="f-col">
+                <div class="f-col-title">Asistencia</div>
+                <ul>
+                    <li><a th:href="@{/faq}">FAQ</a></li>
+                    <li><a th:href="@{/envios}">Envíos</a></li>
+                    <li><a th:href="@{/devoluciones}">Devoluciones</a></li>
+                    <li><a th:href="@{/contacto}">Contacto</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="f-bot">
+            <span>© 2025 Bazarcito.</span>
+            <div class="f-leg">
+                <a href="#">Privacidad</a>
+                <a href="#">Términos</a>
             </div>
         </div>
     </footer>
