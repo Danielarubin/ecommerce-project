@@ -1,0 +1,48 @@
+/* ══════════════════════════════════════════════
+   error.css — Página de Error
+   Bazarcito · páginas: 404, 500, etc.
+══════════════════════════════════════════════ */
+
+body { background: #F5F0E7; }
+
+.error-container {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+}
+
+.error-code {
+    font-family: var(--font-serif);
+    font-size: 8rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin: 0;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    opacity: 0.08;
+}
+
+.error-title {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    margin: 1rem 0;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.error-message {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    max-width: 500px;
+    margin-bottom: 2.5rem;
+    line-height: 1.7;
+}
+
+@media (max-width: 480px) {
+    .error-code { font-size: 5rem; }
+    .error-title { font-size: 1.5rem; }
+}

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Política de devoluciones de Bazarcito — cómo solicitar un reembolso o cambio.">
+    <title>Devoluciones — Bazarcito</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" th:href="@{/css/pages/info-pages.css}">
+</head>
+<body>
+
+    <!-- ══ NAVBAR ══ -->
+    <nav class="nav">
+        <div class="nav-links">
+            <a th:href="@{/colecciones}">Colecciones</a>
+            <a th:href="@{/creadores}">Creadores</a>
+            <a th:href="@{/tiendas}">Tiendas</a>
+            <a th:href="@{/}+'#sobre-nosotros'">Sobre nosotros</a>
+        </div>
+        <a class="nav-logo" th:href="@{/}">Baz<span>ar</span>cito</a>
+        <div class="nav-right">
+            <a th:href="@{/vender}" class="nav-action">Vender</a>
+            <span class="nav-action" id="btnSearch" role="button" aria-label="Buscar">Buscar</span>
+            <a th:href="@{/favoritos}" class="nav-action" style="font-size:1.1rem;text-decoration:none;" aria-label="Favoritos">🤍</a>
+            <a sec:authorize="isAnonymous()" th:href="@{/login}" class="nav-action">Acceder</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/dashboard}" class="nav-action">Mi Cuenta</a>
+            <div class="nav-cart" id="btnCart" role="button" aria-label="Carrito">
+                <span class="nav-action">Bolsa</span>
+                <div style="position:relative;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                    <span id="cartBadge" class="cart-badge" style="display:none;">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ══ PAGE HERO ══ -->
+    <div class="info-hero">
+        <div class="info-hero-inner">
+            <span class="sec-ey">Asistencia</span>
+            <h1 class="info-hero-title">Política de <em>Devoluciones</em></h1>
+            <p class="info-hero-desc">Tu satisfacción importa. Aquí explicamos cómo gestionar cambios y reembolsos.</p>
+        </div>
+    </div>
+
+    <!-- ══ CONTENT ══ -->
+    <div class="info-layout info-layout--single">
+        <main class="info-main info-prose">
+
+            <!-- Tarjetas resumen -->
+            <div class="info-cards">
+                <div class="info-card">
+                    <div class="info-card-icon">📅</div>
+                    <div class="info-card-title">Plazo</div>
+                    <div class="info-card-desc">15 días naturales desde la recepción</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-icon">✅</div>
+                    <div class="info-card-title">Condición</div>
+                    <div class="info-card-desc">Sin uso, con etiquetas originales</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-icon">💳</div>
+                    <div class="info-card-title">Reembolso</div>
+                    <div class="info-card-desc">5 – 10 días hábiles al método original</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-icon">📩</div>
+                    <div class="info-card-title">Proceso</div>
+                    <div class="info-card-desc">Solicitud por formulario de contacto</div>
+                </div>
+            </div>
+
+            <h2 class="prose-h2">¿Cuándo puedo devolver un producto?</h2>
+            <p>Puedes solicitar una devolución dentro de los <strong>15 días naturales</strong> posteriores a la fecha de recepción de tu pedido, siempre que se cumplan las siguientes condiciones:</p>
+            <ul class="prose-list">
+                <li>El producto está en su estado original, sin uso ni lavado</li>
+                <li>Conserva todas sus etiquetas y empaques originales</li>
+                <li>No presenta daños causados por el comprador</li>
+                <li>No es un artículo de la categoría "Sin devolución" (ver más abajo)</li>
+            </ul>
+
+            <h2 class="prose-h2">Artículos sin devolución</h2>
+            <p>Por razones de higiene y naturaleza del producto, los siguientes artículos no son elegibles para devolución:</p>
+            <ul class="prose-list">
+                <li>Ropa interior y trajes de baño</li>
+                <li>Accesorios para el cabello de uso directo</li>
+                <li>Productos personalizados o hechos a medida</li>
+                <li>Artículos marcados explícitamente como "Venta final"</li>
+            </ul>
+
+            <h2 class="prose-h2">¿Cómo solicito una devolución?</h2>
+            <div class="prose-steps">
+                <div class="prose-step">
+                    <div class="prose-step-num">01</div>
+                    <div>
+                        <strong>Contáctanos</strong>
+                        <p>Escríbenos a través del <a th:href="@{/contacto}">formulario de contacto</a> con el asunto "Solicitud de devolución".</p>
+                    </div>
+                </div>
+                <div class="prose-step">
+                    <div class="prose-step-num">02</div>
+                    <div>
+                        <strong>Incluye la información necesaria</strong>
+                        <p>Número de pedido, nombre del producto, motivo de la devolución y fotos del artículo si aplica.</p>
+                    </div>
+                </div>
+                <div class="prose-step">
+                    <div class="prose-step-num">03</div>
+                    <div>
+                        <strong>Espera la confirmación</strong>
+                        <p>Nuestro equipo revisará tu solicitud en un plazo de 2 días hábiles y te enviará las instrucciones de envío de devolución.</p>
+                    </div>
+                </div>
+                <div class="prose-step">
+                    <div class="prose-step-num">04</div>
+                    <div>
+                        <strong>Envía el producto</strong>
+                        <p>Empaca el artículo de forma segura y envíalo a la dirección indicada. Guarda el comprobante de envío.</p>
+                    </div>
+                </div>
+                <div class="prose-step">
+                    <div class="prose-step-num">05</div>
+                    <div>
+                        <strong>Recibe tu reembolso</strong>
+                        <p>Una vez que recibamos e inspeccionemos el producto, procesaremos el reembolso en 5 a 10 días hábiles al método de pago original.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="prose-h2">Productos dañados o incorrectos</h2>
+            <p>Si recibiste un producto dañado durante el envío o diferente al que pediste, contáctanos dentro de las <strong>48 horas</strong> siguientes a la recepción. En estos casos:</p>
+            <ul class="prose-list">
+                <li>El costo del envío de devolución corre por cuenta de Bazarcito</li>
+                <li>Puedes elegir entre reemplazo del producto o reembolso completo</li>
+                <li>No aplica el plazo de 15 días; se gestiona de forma prioritaria</li>
+            </ul>
+
+            <h2 class="prose-h2">Cambios de talla o color</h2>
+            <p>Si necesitas cambiar la talla o el color de un artículo, el proceso es el mismo que una devolución. Una vez que recibamos el producto original, procesaremos el envío del nuevo artículo (sujeto a disponibilidad de stock). Si el artículo deseado no está disponible, se emitirá un reembolso completo.</p>
+
+            <h2 class="prose-h2">Reembolsos</h2>
+            <p>Los reembolsos se acreditan al método de pago original en un plazo de <strong>5 a 10 días hábiles</strong> una vez aprobada la devolución. Los tiempos pueden variar según tu banco o institución financiera.</p>
+            <p class="prose-note">El costo de envío original no es reembolsable, salvo en casos de producto dañado o incorrecto.</p>
+
+            <div class="info-cta-block">
+                <p>¿Necesitas iniciar una devolución?</p>
+                <a th:href="@{/contacto}" class="btn-primary">
+                    Contactar soporte
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ══ FOOTER ══ -->
+    <footer class="footer">
+        <div class="f-grid">
+            <div>
+                <div class="f-logo">Baz<span>ar</span>cito</div>
+                <p class="f-desc">Marketplace editorial para creadores independientes y piezas que importan.</p>
+            </div>
+            <div class="f-col">
+                <div class="f-col-title">Explorar</div>
+                <ul>
+                    <li><a th:href="@{/colecciones}">Colecciones</a></li>
+                    <li><a th:href="@{/creadores}">Creadores</a></li>
+                    <li><a th:href="@{/tiendas}">Tiendas</a></li>
+                    <li><a th:href="@{/favoritos}">Favoritos</a></li>
+                </ul>
+            </div>
+            <div class="f-col">
+                <div class="f-col-title">Vender</div>
+                <ul>
+                    <li><a th:href="@{/vender}">Abrir tu tienda</a></li>
+                    <li><a th:href="@{/register}">Registrarse</a></li>
+                    <li><a th:href="@{/login}">Iniciar sesión</a></li>
+                </ul>
+            </div>
+            <div class="f-col">
+                <div class="f-col-title">Asistencia</div>
+                <ul>
+                    <li><a th:href="@{/faq}">FAQ</a></li>
+                    <li><a th:href="@{/envios}">Envíos</a></li>
+                    <li><a th:href="@{/devoluciones}" class="active">Devoluciones</a></li>
+                    <li><a th:href="@{/contacto}">Contacto</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="f-bot">
+            <span>© 2025 Bazarcito.</span>
+            <div class="f-leg">
+                <a href="#">Privacidad</a>
+                <a href="#">Términos</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ══ SEARCH OVERLAY ══ -->
+    <div id="searchOverlay" class="search-overlay">
+        <div class="search-header">
+            <input type="text" id="searchInput" placeholder="Buscar piezas, creadores...">
+            <button id="btnCloseSearch" class="btn-close">&times;</button>
+        </div>
+        <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <!-- ══ CART DRAWER ══ -->
+    <div id="cartDrawer" class="cart-drawer">
+        <div class="cart-header">
+            <h3>Tu Bolsa</h3>
+            <button id="btnCloseCart" class="btn-close">&times;</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="cart-empty" id="cartEmpty">Tu bolsa está vacía.</div>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total</span>
+                <span id="cartTotalValue">$0</span>
+            </div>
+            <a th:href="@{/checkout}" class="btn-primary" style="width:100%;justify-content:center;text-decoration:none;">Proceder al pago</a>
+        </div>
+    </div>
+    <div id="drawerOverlay" class="drawer-overlay"></div>
+
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

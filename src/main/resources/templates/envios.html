@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Política de envíos de Bazarcito — tiempos, costos y cobertura nacional.">
+    <title>Envíos — Bazarcito</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" th:href="@{/css/pages/info-pages.css}">
+</head>
+<body>
+
+    <!-- ══ NAVBAR ══ -->
+    <nav class="nav">
+        <div class="nav-links">
+            <a th:href="@{/colecciones}">Colecciones</a>
+            <a th:href="@{/creadores}">Creadores</a>
+            <a th:href="@{/tiendas}">Tiendas</a>
+            <a th:href="@{/}+'#sobre-nosotros'">Sobre nosotros</a>
+        </div>
+        <a class="nav-logo" th:href="@{/}">Baz<span>ar</span>cito</a>
+        <div class="nav-right">
+            <a th:href="@{/vender}" class="nav-action">Vender</a>
+            <span class="nav-action" id="btnSearch" role="button" aria-label="Buscar">Buscar</span>
+            <a th:href="@{/favoritos}" class="nav-action" style="font-size:1.1rem;text-decoration:none;" aria-label="Favoritos">🤍</a>
+            <a sec:authorize="isAnonymous()" th:href="@{/login}" class="nav-action">Acceder</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/dashboard}" class="nav-action">Mi Cuenta</a>
+            <div class="nav-cart" id="btnCart" role="button" aria-label="Carrito">
+                <span class="nav-action">Bolsa</span>
+                <div style="position:relative;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                    <span id="cartBadge" class="cart-badge" style="display:none;">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ══ PAGE HERO ══ -->
+    <div class="info-hero">
+        <div class="info-hero-inner">
+            <span class="sec-ey">Asistencia</span>
+            <h1 class="info-hero-title">Política de <em>Envíos</em></h1>
+            <p class="info-hero-desc">Enviamos a toda la República Mexicana. Aquí encontrarás todo sobre tiempos, costos y rastreo.</p>
+        </div>
+    </div>
+
+    <!-- ══ CONTENT ══ -->
+    <div class="info-layout info-layout--single">
+        <main class="info-main info-prose">
+
+            <!-- Tarjetas resumen -->
+            <div class="info-cards">
+                <div class="info-card">
+                    <div class="info-card-icon">📦</div>
+                    <div class="info-card-title">Cobertura</div>
+                    <div class="info-card-desc">Toda la República Mexicana</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-icon">🚚</div>
+                    <div class="info-card-title">Tiempo estimado</div>
+                    <div class="info-card-desc">3 – 7 días hábiles</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-icon">🔍</div>
+                    <div class="info-card-title">Rastreo</div>
+                    <div class="info-card-desc">Número de guía por correo</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-icon">✦</div>
+                    <div class="info-card-title">Envío gratis</div>
+                    <div class="info-card-desc">Según política del vendedor</div>
+                </div>
+            </div>
+
+            <h2 class="prose-h2">¿Cómo funciona el envío?</h2>
+            <p>En Bazarcito cada vendedor gestiona sus propios envíos de forma independiente. Esto significa que los tiempos, costos y paqueterías pueden variar según la tienda. Al momento del checkout verás el costo de envío calculado automáticamente según tu código postal.</p>
+
+            <h2 class="prose-h2">Tiempos de entrega</h2>
+            <div class="info-table-wrap">
+                <table class="info-table">
+                    <thead>
+                        <tr>
+                            <th>Zona</th>
+                            <th>Tiempo estimado</th>
+                            <th>Notas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Ciudad de México y área metropolitana</td>
+                            <td>1 – 3 días hábiles</td>
+                            <td>Algunos vendedores ofrecen entrega el mismo día</td>
+                        </tr>
+                        <tr>
+                            <td>Ciudades principales (Guadalajara, Monterrey, Puebla…)</td>
+                            <td>2 – 4 días hábiles</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>Resto de la República</td>
+                            <td>3 – 7 días hábiles</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>Zonas remotas o de difícil acceso</td>
+                            <td>Hasta 10 días hábiles</td>
+                            <td>El vendedor te notificará si aplica</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="prose-note">Los tiempos son estimados y pueden verse afectados por temporadas altas, días festivos o condiciones climáticas.</p>
+
+            <h2 class="prose-h2">Costos de envío</h2>
+            <p>El costo de envío se calcula en el checkout según:</p>
+            <ul class="prose-list">
+                <li>Tu código postal de entrega</li>
+                <li>El peso y dimensiones del paquete</li>
+                <li>La paquetería seleccionada por el vendedor</li>
+            </ul>
+            <p>Algunos vendedores ofrecen <strong>envío gratuito</strong> a partir de cierto monto de compra. Esto se indica directamente en la página del producto con la etiqueta "Envío gratis".</p>
+
+            <h2 class="prose-h2">Rastreo de tu pedido</h2>
+            <p>Una vez que el vendedor confirme el envío, recibirás un correo electrónico con:</p>
+            <ul class="prose-list">
+                <li>El número de guía de tu paquete</li>
+                <li>El nombre de la paquetería</li>
+                <li>Un enlace directo para rastrear tu envío en tiempo real</li>
+            </ul>
+            <p>Si tienes una cuenta en Bazarcito, también puedes consultar el estado de tu pedido desde la sección "Mis Pedidos" en tu panel.</p>
+
+            <h2 class="prose-h2">¿Qué pasa si no estoy en casa?</h2>
+            <p>La paquetería realizará hasta 2 intentos de entrega. Si no hay nadie disponible, el paquete quedará en la sucursal más cercana por un período de 5 días hábiles. Pasado ese tiempo, el paquete podría ser devuelto al vendedor y se aplicarán los costos de reenvío.</p>
+
+            <h2 class="prose-h2">Paquetes dañados o perdidos</h2>
+            <p>Si tu paquete llega dañado o no llega en el tiempo estimado, contáctanos a través del formulario de <a th:href="@{/contacto}">contacto</a> con tu número de pedido y número de guía. Investigaremos el caso con la paquetería y te daremos seguimiento en un plazo máximo de 48 horas hábiles.</p>
+
+            <div class="info-cta-block">
+                <p>¿Tienes más preguntas sobre envíos?</p>
+                <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
+                    <a th:href="@{/faq#envios}" class="btn-primary">Ver FAQ de envíos</a>
+                    <a th:href="@{/contacto}" class="btn-outline" style="padding:1rem 2rem;">Contactar soporte</a>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ══ FOOTER ══ -->
+    <footer class="footer">
+        <div class="f-grid">
+            <div>
+                <div class="f-logo">Baz<span>ar</span>cito</div>
+                <p class="f-desc">Marketplace editorial para creadores independientes y piezas que importan.</p>
+            </div>
+            <div class="f-col">
+                <div class="f-col-title">Explorar</div>
+                <ul>
+                    <li><a th:href="@{/colecciones}">Colecciones</a></li>
+                    <li><a th:href="@{/creadores}">Creadores</a></li>
+                    <li><a th:href="@{/tiendas}">Tiendas</a></li>
+                    <li><a th:href="@{/favoritos}">Favoritos</a></li>
+                </ul>
+            </div>
+            <div class="f-col">
+                <div class="f-col-title">Vender</div>
+                <ul>
+                    <li><a th:href="@{/vender}">Abrir tu tienda</a></li>
+                    <li><a th:href="@{/register}">Registrarse</a></li>
+                    <li><a th:href="@{/login}">Iniciar sesión</a></li>
+                </ul>
+            </div>
+            <div class="f-col">
+                <div class="f-col-title">Asistencia</div>
+                <ul>
+                    <li><a th:href="@{/faq}">FAQ</a></li>
+                    <li><a th:href="@{/envios}" class="active">Envíos</a></li>
+                    <li><a th:href="@{/devoluciones}">Devoluciones</a></li>
+                    <li><a th:href="@{/contacto}">Contacto</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="f-bot">
+            <span>© 2025 Bazarcito.</span>
+            <div class="f-leg">
+                <a href="#">Privacidad</a>
+                <a href="#">Términos</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ══ SEARCH OVERLAY ══ -->
+    <div id="searchOverlay" class="search-overlay">
+        <div class="search-header">
+            <input type="text" id="searchInput" placeholder="Buscar piezas, creadores...">
+            <button id="btnCloseSearch" class="btn-close">&times;</button>
+        </div>
+        <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <!-- ══ CART DRAWER ══ -->
+    <div id="cartDrawer" class="cart-drawer">
+        <div class="cart-header">
+            <h3>Tu Bolsa</h3>
+            <button id="btnCloseCart" class="btn-close">&times;</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="cart-empty" id="cartEmpty">Tu bolsa está vacía.</div>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total</span>
+                <span id="cartTotalValue">$0</span>
+            </div>
+            <a th:href="@{/checkout}" class="btn-primary" style="width:100%;justify-content:center;text-decoration:none;">Proceder al pago</a>
+        </div>
+    </div>
+    <div id="drawerOverlay" class="drawer-overlay"></div>
+
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>
