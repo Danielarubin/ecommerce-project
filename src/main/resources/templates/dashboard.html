@@ -7,88 +7,294 @@
     <link rel="stylesheet" th:href="@{/css/index.css}">
     <link rel="stylesheet" th:href="@{/css/login.css}">
     <style>
-        .dashboard-container { max-width: 1200px; margin: 4rem auto; padding: 0 2rem; }
-        .dashboard-header { margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; }
-        .grid-dashboard { display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; }
-        @media (max-width: 768px) { .grid-dashboard { grid-template-columns: 1fr; } }
-        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .form-control { width: 100%; padding: 0.75rem; margin-top: 0.5rem; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;}
+        body { background: #F5F0E7; }
+
+        .dashboard-container {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 6.5rem 2rem 5rem;
+        }
+
+        .dashboard-header {
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 1.5rem;
+            background:
+                linear-gradient(120deg, rgba(255,179,138,0.16), rgba(255,255,255,0) 42%),
+                var(--bg-primary);
+        }
+
+        .dh-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-color), #e8855c);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 8px 24px rgba(255,179,138,0.35);
+        }
+
+        .dh-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .dh-eyebrow {
+            font-size: 0.62rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .dh-greeting {
+            font-family: var(--font-serif);
+            font-size: clamp(2rem, 5vw, 3.8rem);
+            font-weight: 800;
+            line-height: 1;
+            color: var(--text-dark);
+        }
+
+        .dh-greeting em {
+            font-style: normal;
+            color: var(--accent-color);
+        }
+
+        .dh-role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0.3rem;
+            font-size: 0.62rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-weight: 500;
+            color: var(--text-dark);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            width: fit-content;
+        }
+
+        .dh-role-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            flex-shrink: 0;
+        }
+
+        .dh-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            align-items: flex-end;
+        }
+
+        .dh-actions a,
+        .dh-actions button {
+            font-size: 0.68rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .grid-dashboard {
+            display: grid;
+            grid-template-columns: 0.8fr 1.2fr;
+            gap: 1.25rem;
+        }
+
+        .card {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            min-width: 0;
+        }
+
+        .card h3 {
+            font-family: var(--font-serif);
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            letter-spacing: -0.02em;
+            margin-bottom: 1.75rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .quick-actions {
+            display: grid;
+            gap: 0.75rem;
+        }
+        .dash-list {
+            display: grid;
+            gap: 0.75rem;
+        }
+        .dash-item {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            display: grid;
+            grid-template-columns: 72px 1fr;
+            gap: 1rem;
+            align-items: center;
+            background: #FFFDF9;
+            color: inherit;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .dash-item:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(42,33,24,0.06); }
+        .dash-thumb {
+            width: 72px;
+            aspect-ratio: 1;
+            border-radius: 6px;
+            background: #EDE4D7;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.62rem;
+            letter-spacing: 0.08em;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        .dash-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .dash-item-title {
+            font-weight: 700;
+            color: var(--text-dark);
+            overflow-wrap: anywhere;
+        }
+        .dash-item-meta {
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            margin-top: 0.25rem;
+        }
+        .empty-panel {
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            color: var(--text-muted);
+            background: #FFFDF9;
+        }
+        .order-row {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: #FFFDF9;
+        }
+
+        @media (max-width: 768px) {
+            .grid-dashboard { grid-template-columns: 1fr; }
+            .dashboard-header {
+                grid-template-columns: auto 1fr;
+                grid-template-rows: auto auto;
+            }
+            .dh-actions {
+                grid-column: 1 / -1;
+                flex-direction: row;
+                align-items: center;
+            }
+            .dh-greeting { font-size: 1.8rem; }
+        }
     </style>
 </head>
 <body>
     <nav class="nav">
-        <div>
-            <a th:href="@{/}" class="btn-link" style="border:none;">Volver al Inicio</a>
+        <div class="nav-links">
+            <a th:href="@{/colecciones}">Colecciones</a>
+            <a th:href="@{/creadores}">Creadores</a>
+            <a th:href="@{/tiendas}">Tiendas</a>
         </div>
         <a class="nav-logo" th:href="@{/}">Baz<span>ar</span>cito</a>
         <div>
             <form th:action="@{/logout}" method="post" style="display:inline;">
-                <button type="submit" class="btn-link" style="border:none; cursor:pointer;">Cerrar Sesión</button>
+                <button type="submit" class="nav-action" style="background:none;border:none;cursor:pointer;">Cerrar Sesión</button>
             </form>
         </div>
     </nav>
 
     <div class="dashboard-container">
+
         <div class="dashboard-header">
-            <h1 th:text="'Hola, ' + ${user.firstName}">Hola</h1>
-            <p th:text="'Nivel de cuenta: ' + ${user.role}">Rol</p>
+            <div class="dh-avatar"
+                 th:text="${user.firstName != null ? user.firstName.substring(0,1).toUpperCase() : 'U'}">U</div>
+
+            <div class="dh-info">
+                <span class="dh-eyebrow">Mi panel · Bazarcito</span>
+                <h1 class="dh-greeting">
+                    Hola, <em th:text="${user.firstName != null ? user.firstName : user.username}">Usuario</em>
+                </h1>
+                <span class="dh-role-badge"
+                      th:text="${user.role.name() == 'SELLER' ? 'Creador / Vendedor' : 'Comprador'}">Rol</span>
+            </div>
+
+            <div class="dh-actions">
+                <a th:if="${user.role.name() == 'SELLER'}"
+                   th:href="@{/vender}" class="btn-primary">Creator Studio</a>
+                <a th:href="@{/colecciones}" class="btn-link">Explorar catalogo</a>
+            </div>
         </div>
 
-        <!-- VISTA DE VENDEDOR -->
         <div th:if="${user.role.name() == 'SELLER'}" class="grid-dashboard">
             <div class="card">
-                <h3>Subir Nuevo Producto</h3>
-                <form th:action="@{/dashboard/producto/nuevo}" method="post" th:object="${newProduct}">
-                    <div style="margin-bottom:1rem;">
-                        <label>Nombre del Producto</label>
-                        <input type="text" th:field="*{name}" class="form-control" required>
-                    </div>
-                    <div style="margin-bottom:1rem;">
-                        <label>Marca / Colección</label>
-                        <input type="text" th:field="*{brand}" class="form-control" required>
-                    </div>
-                    <div style="margin-bottom:1rem;">
-                        <label>Precio ($)</label>
-                        <input type="number" step="0.01" th:field="*{price}" class="form-control" required>
-                    </div>
-                    <div style="margin-bottom:1rem;">
-                        <label>Inventario (Unidades)</label>
-                        <input type="number" th:field="*{stock}" class="form-control" required>
-                    </div>
-                    <div style="margin-bottom:1rem;">
-                        <label>URL de la Imagen (Opcional)</label>
-                        <input type="text" th:field="*{image}" class="form-control" placeholder="ej. chaqueta.jpg">
-                    </div>
-                    <button type="submit" class="btn-primary" style="width:100%;">Publicar Producto</button>
-                </form>
+                <h3>Acciones</h3>
+                <div class="quick-actions">
+                    <a th:href="@{/vender/subir-producto}" class="btn-primary" style="text-decoration:none;justify-content:center;">Subir pieza</a>
+                    <a th:href="@{/vender}" class="btn-outline" style="text-decoration:none;justify-content:center;">Gestionar inventario</a>
+                    <a th:href="@{/tienda/{id}(id=${user.id})}" class="btn-outline" style="text-decoration:none;justify-content:center;">Ver tienda publica</a>
+                </div>
             </div>
             
             <div class="card">
-                <h3>Mi Catálogo Activo</h3>
-                <div th:if="${#lists.isEmpty(misProductos)}">
-                    <p>Aún no tienes productos publicados.</p>
+                <h3>Mi Catalogo</h3>
+                <div th:if="${#lists.isEmpty(misProductos)}" class="empty-panel">
+                    Aun no tienes productos publicados.
                 </div>
-                <div th:each="prod : ${misProductos}" style="border-bottom: 1px solid #eee; padding: 1rem 0; display:flex; justify-content: space-between;">
-                    <div>
-                        <strong th:text="${prod.name}">Producto</strong> - <span th:text="${prod.brand}">Marca</span>
-                        <p style="margin: 0; color: #666; font-size:0.9rem;" th:text="'Stock: ' + ${prod.stock} + ' | Precio: $' + ${#numbers.formatDecimal(prod.price, 1, 'COMMA', 2, 'POINT')}">Stock</p>
+                <div class="dash-list" th:if="${!#lists.isEmpty(misProductos)}">
+                <a th:each="prod : ${misProductos}" class="dash-item" th:href="@{/product/{id}(id=${prod.id})}">
+                    <div class="dash-thumb">
+                        <img th:if="${prod.image != null and (prod.image.startsWith('http') or prod.image.startsWith('/uploads/'))}" th:src="${prod.image}" th:alt="${prod.name}">
+                        <span th:if="${prod.image == null or !(prod.image.startsWith('http') or prod.image.startsWith('/uploads/'))}">Sin imagen</span>
                     </div>
+                    <div>
+                        <div class="dash-item-title" th:text="${prod.name}">Producto</div>
+                        <div class="dash-item-meta" th:text="${prod.brand + ' · ' + (prod.stock ?: 0) + ' en stock · $' + #numbers.formatDecimal(prod.price, 1, 'COMMA', 2, 'POINT')}">Detalle</div>
+                    </div>
+                </a>
                 </div>
             </div>
         </div>
 
-        <!-- VISTA DE COMPRADOR -->
         <div th:if="${user.role.name() == 'BUYER'}" class="card">
             <h3>Mi Historial de Compras</h3>
-            <div th:if="${#lists.isEmpty(misOrdenes)}">
-                <p>Aún no has realizado ninguna compra.</p>
-                <a th:href="@{/}" class="btn-primary" style="display:inline-block; margin-top:1rem;">Explorar Tienda</a>
+            <div th:if="${#lists.isEmpty(misOrdenes)}" class="empty-panel">
+                <p>Aun no has realizado ninguna compra.</p>
+                <a th:href="@{/colecciones}" class="btn-primary" style="display:inline-flex; margin-top:1rem;text-decoration:none;">Explorar piezas</a>
             </div>
-            <div th:each="orden : ${misOrdenes}" style="border-bottom: 1px solid #eee; padding: 1rem 0;">
-                <strong th:text="'Orden #' + ${orden.id} + ' - ' + ${#temporals.format(orden.orderDate, 'dd/MM/yyyy HH:mm')}">Orden</strong>
-                <p style="margin: 0; color: #666; font-size:0.9rem;" th:text="'Total: $' + ${orden.totalAmount}"></p>
+            <div th:if="${!#lists.isEmpty(misOrdenes)}">
+                <div th:each="orden : ${misOrdenes}" class="order-row">
+                    <strong th:text="'Orden #' + ${orden.id}">Orden</strong>
+                    <p style="margin: 0.35rem 0 0; color: var(--text-muted); font-size:0.9rem;"
+                       th:text="'Total: $' + ${orden.totalAmount}"></p>
+                    </div>
+                </div>
             </div>
-        </div>
     </div>
 </body>
 </html>

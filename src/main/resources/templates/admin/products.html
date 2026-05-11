@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Prendas - Bazarcito</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <style>
+        body { background:#F5F0E7; }
+        .admin-shell { max-width:1180px; margin:0 auto; padding:6.5rem 2rem 5rem; }
+        .page-head { display:flex; justify-content:space-between; gap:1rem; align-items:flex-end; margin-bottom:1.25rem; }
+        .page-title { font-family:var(--font-serif); font-size:clamp(2.2rem,6vw,4.2rem); line-height:1; }
+        .notice { background:#F2E7FF; border:1px solid #D7B7FF; color:#5F238A; padding:.85rem 1rem; border-radius:8px; margin-bottom:1rem; }
+        .table-card { background:var(--bg-primary); border:1px solid var(--border-color); border-radius:8px; overflow:hidden; }
+        table { width:100%; border-collapse:collapse; }
+        th, td { padding:1rem; text-align:left; border-bottom:1px solid var(--border-color); vertical-align:middle; }
+        th { font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); background:#FFFDF9; }
+        tr:last-child td { border-bottom:0; }
+        .thumb { width:58px; aspect-ratio:1; border-radius:6px; background:#EDE4D7; overflow:hidden; display:grid; place-items:center; color:var(--text-muted); font-size:.6rem; text-transform:uppercase; }
+        .thumb img { width:100%; height:100%; object-fit:cover; }
+        .actions { display:flex; gap:.6rem; align-items:center; flex-wrap:wrap; }
+        .danger { border:1px solid #C75C4A; color:#9A2A20; background:transparent; padding:.55rem .8rem; cursor:pointer; font:inherit; font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; }
+        .muted { color:var(--text-muted); font-size:.85rem; }
+        @media (max-width:900px) {
+            table, thead, tbody, th, td, tr { display:block; }
+            thead { display:none; }
+            tr { border-bottom:1px solid var(--border-color); padding:.75rem; }
+            td { border:0; padding:.45rem 0; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-links">
+            <a th:href="@{/admin}">Admin</a>
+            <a th:href="@{/admin/creadores}">Creadores</a>
+            <a th:href="@{/admin/prendas}">Prendas</a>
+        </div>
+        <a class="nav-logo" th:href="@{/}">Baz<span>ar</span>cito</a>
+        <div class="nav-right">
+            <a th:href="@{/}" class="nav-action">Inicio</a>
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" class="nav-action" style="background:none;border:none;cursor:pointer;">Cerrar sesion</button>
+            </form>
+        </div>
+    </nav>
+    <main class="admin-shell">
+        <div class="page-head">
+            <div>
+                <div class="muted">Inventario registrado</div>
+                <h1 class="page-title">Prendas</h1>
+            </div>
+            <a th:href="@{/admin}" class="btn-link">Volver al panel</a>
+        </div>
+        <div th:if="${param.updated}" class="notice">Prenda actualizada.</div>
+        <div th:if="${param.deleted}" class="notice">Prenda retirada del catalogo.</div>
+        <section class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Prenda</th>
+                        <th>Tienda</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="product : ${products}">
+                        <td>
+                            <div class="thumb">
+                                <img th:if="${product.image != null and (product.image.startsWith('http') or product.image.startsWith('/uploads/'))}" th:src="${product.image}" th:alt="${product.name}">
+                                <span th:if="${product.image == null or !(product.image.startsWith('http') or product.image.startsWith('/uploads/'))}">Sin imagen</span>
+                            </div>
+                        </td>
+                        <td><strong th:text="${product.name}">Prenda</strong><div class="muted" th:text="${product.brand}">Marca</div></td>
+                        <td th:text="${product.seller != null ? product.seller.username : 'Retirada'}">Tienda</td>
+                        <td th:text="'$' + ${product.price}">$0</td>
+                        <td th:text="${product.stock}">0</td>
+                        <td th:text="${product.status}">AVAILABLE</td>
+                        <td>
+                            <div class="actions">
+                                <a class="btn-link" th:href="@{/admin/prendas/{id}/editar(id=${product.id})}">Editar</a>
+                                <form th:action="@{/admin/prendas/{id}/eliminar(id=${product.id})}" method="post"
+                                      data-confirm="La prenda saldra del catalogo publico. Si ya pertenece a una orden, se conservara el historial de compra."
+                                      data-confirm-title="Retirar prenda"
+                                      data-confirm-text="Retirar">
+                                    <button class="danger" type="submit">Quitar</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

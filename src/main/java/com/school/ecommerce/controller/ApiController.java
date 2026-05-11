@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")
@@ -23,8 +24,8 @@ public class ApiController {
     }
 
     @SuppressWarnings("unchecked")
-    private List<String> getFavorites(HttpSession session) {
-        List<String> favs = (List<String>) session.getAttribute("favorites");
+    private List<Long> getFavorites(HttpSession session) {
+        List<Long> favs = (List<Long>) session.getAttribute("favorites");
         if (favs == null) {
             favs = new ArrayList<>();
             session.setAttribute("favorites", favs);
@@ -42,7 +43,7 @@ public class ApiController {
         List<CartItemDto> cart = getCart(session);
         boolean found = false;
         for (CartItemDto cartItem : cart) {
-            if (cartItem.getId().equals(item.getId())) {
+            if (cartItem.getId().equals(item.getId()) && Objects.equals(cartItem.getSelectedSize(), item.getSelectedSize())) {
                 cartItem.setQty(cartItem.getQty() + 1);
                 found = true;
                 break;
@@ -71,13 +72,13 @@ public class ApiController {
     }
 
     @GetMapping("/favorites")
-    public ResponseEntity<List<String>> getFavoriteItems(HttpSession session) {
+    public ResponseEntity<List<Long>> getFavoriteItems(HttpSession session) {
         return ResponseEntity.ok(getFavorites(session));
     }
 
     @PostMapping("/favorites/toggle")
-    public ResponseEntity<List<String>> toggleFavorite(@RequestParam String id, HttpSession session) {
-        List<String> favs = getFavorites(session);
+    public ResponseEntity<List<Long>> toggleFavorite(@RequestParam Long id, HttpSession session) {
+        List<Long> favs = getFavorites(session);
         if (favs.contains(id)) {
             favs.remove(id);
         } else {

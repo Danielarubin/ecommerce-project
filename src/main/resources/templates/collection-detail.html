@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${collection.name + ' | Colección'}">Colección</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <style>
+        body { background: #F5F0E7; }
+        .collection-detail-hero {
+            padding: clamp(4rem, 8vw, 7rem) clamp(1.25rem, 4vw, 4rem) 3rem;
+            background:
+                linear-gradient(135deg, rgba(255,179,138,0.18), rgba(255,255,255,0) 38%),
+                var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .collection-detail-inner {
+            max-width: 1320px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(280px, 0.34fr);
+            gap: clamp(2rem, 5vw, 5rem);
+            align-items: end;
+        }
+        .collection-kicker {
+            font-size: 0.68rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .collection-detail-title {
+            font-family: var(--font-serif);
+            font-size: clamp(3rem, 7vw, 6rem);
+            line-height: 0.95;
+            letter-spacing: 0;
+            margin-bottom: 1rem;
+        }
+        .collection-detail-copy {
+            color: #625447;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            max-width: 680px;
+        }
+        .collection-detail-panel {
+            background: var(--text-dark);
+            color: var(--bg-primary);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+        .collection-detail-panel strong {
+            display: block;
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            line-height: 1;
+            margin-bottom: 0.35rem;
+        }
+        .collection-detail-panel span {
+            display: block;
+            color: rgba(253,250,246,0.62);
+            font-size: 0.68rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .collection-products {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 3rem clamp(1.25rem, 4vw, 4rem) 6rem;
+        }
+        .collection-toolbar {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .collection-toolbar h2 {
+            font-family: var(--font-serif);
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            line-height: 1;
+        }
+        .collection-search {
+            min-width: min(100%, 380px);
+        }
+        .collection-search input {
+            width: 100%;
+            min-height: 46px;
+            border: 1px solid var(--border-color);
+            border-radius: 999px;
+            background: var(--bg-primary);
+            padding: 0.65rem 1rem;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+        }
+        .collection-grid-detail {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.4rem;
+        }
+        .product-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 32px rgba(42,33,24,0.08);
+        }
+        .product-image {
+            position: relative;
+            aspect-ratio: 4 / 5;
+            background: var(--bg-secondary);
+            overflow: hidden;
+        }
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .product-info {
+            padding: 1rem;
+        }
+        .pi-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .pi-header h3 {
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            line-height: 1.2;
+        }
+        .price {
+            white-space: nowrap;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .brand {
+            margin-top: 0.45rem;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .empty-products {
+            padding: 4rem 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-primary);
+        }
+        .detail-search-empty {
+            display: none;
+            margin-top: 1rem;
+        }
+        @media (max-width: 860px) {
+            .collection-detail-inner { grid-template-columns: 1fr; }
+            .collection-toolbar { align-items: flex-start; flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-links">
+            <a th:href="@{/colecciones}" class="active">Colecciones</a>
+            <a th:href="@{/creadores}">Creadores</a>
+            <a th:href="@{/tiendas}">Tiendas</a>
+        </div>
+        <a class="nav-logo" th:href="@{/}">Baz<span>ar</span>cito</a>
+        <div class="nav-right">
+            <a th:href="@{/vender}" class="nav-action">Vender</a>
+            <span class="nav-action" id="btnSearch">Buscar</span>
+            <a th:href="@{/favoritos}" class="nav-action" style="font-size:1.1rem;text-decoration:none;" aria-label="Favoritos">🤍</a>
+            <a sec:authorize="isAnonymous()" th:href="@{/login}" class="nav-action">Acceder</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/dashboard}" class="nav-action">Mi Cuenta</a>
+            <div class="nav-cart" id="btnCart">
+                <span class="nav-action">Bolsa</span>
+                <div style="position:relative;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                    <span id="cartBadge" class="cart-badge" style="display:none;">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="collection-detail-hero">
+        <div class="collection-detail-inner">
+            <div>
+                <div class="collection-kicker"
+                     th:text="${'Colección por ' + (collection.seller.firstName != null ? collection.seller.firstName + ' ' + (collection.seller.lastName != null ? collection.seller.lastName : '') : collection.seller.username)}">
+                    Colección por tienda
+                </div>
+                <h1 class="collection-detail-title" th:text="${collection.name}">Vestidos de noche</h1>
+                <p class="collection-detail-copy"
+                   th:text="${collection.description != null and !collection.description.isBlank() ? collection.description : 'Una seleccion curada por su creador dentro de Bazarcito.'}">
+                    Una selección curada por su creador.
+                </p>
+            </div>
+            <aside class="collection-detail-panel">
+                <strong th:text="${productos != null ? productos.size() : 0}">0</strong>
+                <span>Piezas en esta colección</span>
+                <a th:href="@{/tienda/{id}(id=${collection.seller.id})}" class="btn-primary" style="margin-top:1.25rem;text-decoration:none;">Ver tienda</a>
+            </aside>
+        </div>
+    </header>
+
+    <main class="collection-products">
+        <div class="collection-toolbar">
+            <div>
+                <span class="sec-ey">Explorar</span>
+                <h2>Piezas de la colección</h2>
+            </div>
+            <div class="collection-search">
+                <input id="collectionProductSearch" type="search" placeholder="Buscar en esta colección...">
+            </div>
+        </div>
+
+        <div class="collection-grid-detail" th:if="${productos != null and !productos.isEmpty()}">
+            <article class="product-card"
+                     th:each="producto : ${productos}"
+                     th:data-id="${producto.id}"
+                     th:data-name="${producto.name}"
+                     th:data-brand="${producto.brand}"
+                     th:data-price="${producto.price}"
+                     th:data-image="${producto.image}"
+                     th:data-status="${producto.status}"
+                     th:onclick="|window.location.href='@{/product/{id}(id=${producto.id})}'|">
+                <div class="product-image">
+                    <img th:if="${producto.image != null and (producto.image.startsWith('http') or producto.image.startsWith('/uploads/'))}"
+                         th:src="${producto.image}" th:alt="${producto.name}" loading="lazy">
+                    <div class="product-overlay">
+                        <button class="btn-fav" aria-label="Añadir a favoritos">🤍</button>
+                        <button class="btn-add-cart">Añadir a bolsa</button>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <div class="pi-header">
+                        <h3 th:text="${producto.name}">Nombre</h3>
+                        <span class="price" th:text="'$' + ${#numbers.formatDecimal(producto.price,1,'COMMA',0,'POINT')}">$0</span>
+                    </div>
+                    <div class="brand" th:text="${producto.brand}">Marca</div>
+                </div>
+            </article>
+        </div>
+
+        <div th:if="${productos == null or productos.isEmpty()}" class="empty-products">
+            Esta colección aún no tiene piezas asignadas.
+        </div>
+        <div id="collectionSearchEmpty" class="empty-products detail-search-empty">
+            No encontramos piezas con esa búsqueda en esta colección.
+        </div>
+    </main>
+
+    <div id="searchOverlay" class="search-overlay">
+        <div class="search-header">
+            <input type="text" id="searchInput" placeholder="Buscar piezas, creadores...">
+            <button id="btnCloseSearch" class="btn-close">&times;</button>
+        </div>
+        <div class="search-results" id="searchResults"></div>
+    </div>
+    <div id="cartDrawer" class="cart-drawer">
+        <div class="cart-header">
+            <h3>Tu Bolsa</h3>
+            <button id="btnCloseCart" class="btn-close">&times;</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="cart-empty" id="cartEmpty">Tu bolsa está vacía.</div>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total</span>
+                <span id="cartTotalValue">$0</span>
+            </div>
+            <a th:href="@{/checkout}" class="btn-primary" style="width:100%;justify-content:center;text-decoration:none;">Proceder al pago</a>
+        </div>
+    </div>
+    <div id="drawerOverlay" class="drawer-overlay"></div>
+
+    <script th:src="@{/js/app.js}"></script>
+    <script>
+        const collectionSearch = document.getElementById('collectionProductSearch');
+        const collectionEmpty = document.getElementById('collectionSearchEmpty');
+        const collectionCards = Array.from(document.querySelectorAll('.collection-grid-detail .product-card'));
+
+        collectionSearch?.addEventListener('input', () => {
+            const query = collectionSearch.value.trim().toLowerCase();
+            let visible = 0;
+
+            collectionCards.forEach(card => {
+                const haystack = [
+                    card.dataset.name,
+                    card.dataset.brand
+                ].join(' ').toLowerCase();
+                const match = !query || haystack.includes(query);
+                card.style.display = match ? '' : 'none';
+                if (match) visible += 1;
+            });
+
+            if (collectionEmpty) collectionEmpty.style.display = visible === 0 && query ? 'block' : 'none';
+        });
+    </script>
+</body>
+</html>

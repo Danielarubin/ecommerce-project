@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Creadores - Bazarcito</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <style>
+        body { background:#F5F0E7; }
+        .admin-shell { max-width:1180px; margin:0 auto; padding:6.5rem 2rem 5rem; }
+        .page-head { display:flex; justify-content:space-between; gap:1rem; align-items:flex-end; margin-bottom:1.25rem; }
+        .page-title { font-family:var(--font-serif); font-size:clamp(2.2rem,6vw,4.2rem); line-height:1; }
+        .notice { background:#F2E7FF; border:1px solid #D7B7FF; color:#5F238A; padding:.85rem 1rem; border-radius:8px; margin-bottom:1rem; }
+        .error { background:#FFF3F0; border:1px solid #F4B6A9; color:#9A2A20; padding:.85rem 1rem; border-radius:8px; margin-bottom:1rem; }
+        .table-card { background:var(--bg-primary); border:1px solid var(--border-color); border-radius:8px; overflow:hidden; }
+        table { width:100%; border-collapse:collapse; }
+        th, td { padding:1rem; text-align:left; border-bottom:1px solid var(--border-color); vertical-align:middle; }
+        th { font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); background:#FFFDF9; }
+        tr:last-child td { border-bottom:0; }
+        .role { display:inline-flex; border:1px solid var(--border-color); border-radius:999px; padding:.2rem .65rem; font-size:.68rem; text-transform:uppercase; }
+        .actions { display:flex; gap:.6rem; align-items:center; flex-wrap:wrap; }
+        .danger { border:1px solid #C75C4A; color:#9A2A20; background:transparent; padding:.55rem .8rem; cursor:pointer; font:inherit; font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; }
+        .muted { color:var(--text-muted); font-size:.85rem; }
+        @media (max-width:850px) {
+            table, thead, tbody, th, td, tr { display:block; }
+            thead { display:none; }
+            tr { border-bottom:1px solid var(--border-color); padding:.75rem; }
+            td { border:0; padding:.45rem 0; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-links">
+            <a th:href="@{/admin}">Admin</a>
+            <a th:href="@{/admin/creadores}">Creadores</a>
+            <a th:href="@{/admin/prendas}">Prendas</a>
+        </div>
+        <a class="nav-logo" th:href="@{/}">Baz<span>ar</span>cito</a>
+        <div class="nav-right">
+            <a th:href="@{/}" class="nav-action">Inicio</a>
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" class="nav-action" style="background:none;border:none;cursor:pointer;">Cerrar sesion</button>
+            </form>
+        </div>
+    </nav>
+
+    <main class="admin-shell">
+        <div class="page-head">
+            <div>
+                <div class="muted">Usuarios, tiendas y creadores registrados</div>
+                <h1 class="page-title">Creadores</h1>
+            </div>
+            <a th:href="@{/admin}" class="btn-link">Volver al panel</a>
+        </div>
+
+        <div th:if="${param.updated}" class="notice">Usuario actualizado.</div>
+        <div th:if="${param.deleted}" class="notice">Usuario eliminado.</div>
+        <div th:if="${param.error}" class="error">No se pudo completar la accion. Revisa si el usuario tiene compras, o si intentaste eliminar tu propia cuenta admin.</div>
+
+        <section class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre / tienda</th>
+                        <th>Correo</th>
+                        <th>Rol</th>
+                        <th>Ubicacion</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.id}">1</td>
+                        <td>
+                            <strong th:text="${user.username}">Tienda</strong>
+                            <div class="muted" th:text="${(user.firstName != null ? user.firstName : '') + ' ' + (user.lastName != null ? user.lastName : '')}">Nombre</div>
+                        </td>
+                        <td th:text="${user.email}">correo</td>
+                        <td><span class="role" th:text="${user.role}">SELLER</span></td>
+                        <td th:text="${user.location != null ? user.location : 'Sin ubicacion'}">Ubicacion</td>
+                        <td>
+                            <div class="actions">
+                                <a class="btn-link" th:href="@{/admin/creadores/{id}/editar(id=${user.id})}">Editar</a>
+                                <form th:action="@{/admin/creadores/{id}/eliminar(id=${user.id})}" method="post"
+                                      data-confirm="Se eliminara este usuario y se retiraran sus prendas del catalogo. Esta accion no se puede deshacer."
+                                      data-confirm-title="Eliminar usuario"
+                                      data-confirm-text="Eliminar">
+                                    <button class="danger" type="submit">Eliminar</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

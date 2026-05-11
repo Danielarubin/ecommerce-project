@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Controller
@@ -26,11 +27,15 @@ public class CartController {
 
     @SuppressWarnings("unchecked")
     @PostMapping("/add/{productId}")
-    public String addToCart(@PathVariable Long productId, @RequestParam(defaultValue = "1") int quantity, HttpSession session) {
+    public String addToCart(@PathVariable Long productId,
+                            @RequestParam(defaultValue = "1") int quantity,
+                            @RequestParam(value = "selectedSize", required = false) String selectedSize,
+                            HttpSession session) {
         Optional<Product> optionalProduct = productRepository.findById(productId);
         
         if (optionalProduct.isPresent()) {
             Product product = optionalProduct.get();
+            String normalizedSize = normalizeSize(selectedSize);
             
             List<CartItemDto> cart = (List<CartItemDto>) session.getAttribute("cart");
             if (cart == null) {
@@ -39,7 +44,7 @@ public class CartController {
             
             boolean found = false;
             for (CartItemDto item : cart) {
-                if (item.getId().equals(String.valueOf(product.getId()))) {
+                if (item.getId().equals(product.getId()) && Objects.equals(item.getSelectedSize(), normalizedSize)) {
                     item.setQty(item.getQty() + quantity);
                     found = true;
                     break;
@@ -48,11 +53,12 @@ public class CartController {
             
             if (!found) {
                 CartItemDto newItem = new CartItemDto();
-                newItem.setId(String.valueOf(product.getId()));
+                newItem.setId(product.getId());
                 newItem.setName(product.getName());
                 newItem.setBrand(product.getBrand());
                 newItem.setPrice(product.getPrice().doubleValue());
                 newItem.setImage(product.getImage());
+                newItem.setSelectedSize(normalizedSize);
                 newItem.setQty(quantity);
                 cart.add(newItem);
             }
@@ -61,5 +67,9 @@ public class CartController {
         }
         
         return "redirect:/";
+    }
+
+    private String normalizeSize(String selectedSize) {
+        return selectedSize == null || selectedSize.isBlank() ? null : selectedSize.trim();
     }
 }

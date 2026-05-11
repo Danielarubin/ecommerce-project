@@ -9,32 +9,45 @@
     <style>
         .success-wrapper {
             min-height: calc(100vh - 70px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            background: var(--bg-primary);
-            text-align: center;
+            display: grid;
+            place-items: center;
+            padding: clamp(2rem, 5vw, 5rem);
+            background:
+                linear-gradient(135deg, rgba(255,179,138,0.18), rgba(255,255,255,0) 44%),
+                var(--bg-primary);
         }
         .success-card {
-            max-width: 600px;
-            padding: 4rem;
-            background: rgba(253, 250, 246, 0.85);
-            backdrop-filter: blur(20px);
+            width: min(920px, 100%);
+            padding: clamp(2rem, 5vw, 4.5rem);
+            background: rgba(253, 250, 246, 0.92);
             border: 1px solid var(--border-color);
-            border-radius: 4px;
+            border-radius: 8px;
+            display: grid;
+            grid-template-columns: 0.95fr 1.05fr;
+            gap: clamp(2rem, 5vw, 4rem);
+            align-items: center;
+            box-shadow: 0 24px 70px rgba(42, 33, 24, 0.08);
         }
         .success-icon {
-            font-size: 4rem;
-            margin-bottom: 2rem;
+            width: 94px;
+            height: 94px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: var(--text-dark);
+            color: var(--bg-primary);
+            font-family: var(--font-serif);
+            font-size: 2.7rem;
+            margin-bottom: 1.75rem;
         }
         .success-title {
             font-family: var(--font-serif);
-            font-size: 3.5rem;
+            font-size: clamp(2.6rem, 6vw, 5rem);
             font-weight: 700;
             color: var(--text-dark);
             margin-bottom: 1rem;
-            line-height: 1.1;
+            line-height: 0.98;
+            letter-spacing: 0;
         }
         .success-title em {
             font-style: normal;
@@ -42,10 +55,60 @@
             color: var(--accent-color);
         }
         .success-desc {
+            color: #625447;
+            font-size: 1.02rem;
+            margin-bottom: 2rem;
+            line-height: 1.75;
+        }
+        .success-next {
+            border-left: 1px solid var(--border-color);
+            padding-left: clamp(1.5rem, 4vw, 3rem);
+        }
+        .success-kicker {
+            display: block;
+            font-size: 0.68rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
             color: var(--text-muted);
-            font-size: 1.1rem;
-            margin-bottom: 3rem;
+            margin-bottom: 1rem;
+        }
+        .success-steps {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .success-step {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 0.85rem;
+            align-items: start;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .success-step strong {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: var(--bg-secondary);
+            font-size: 0.78rem;
+        }
+        .success-step span {
+            color: #625447;
             line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        @media (max-width: 760px) {
+            .success-card {
+                grid-template-columns: 1fr;
+            }
+            .success-next {
+                border-left: 0;
+                padding-left: 0;
+                border-top: 1px solid var(--border-color);
+                padding-top: 2rem;
+            }
         }
     </style>
 </head>
@@ -58,10 +121,29 @@
 
     <div class="success-wrapper">
         <div class="success-card">
-            <div class="success-icon">✨</div>
-            <h1 class="success-title">¡Orden <br><em>Confirmada!</em></h1>
-            <p class="success-desc">Gracias por apoyar el diseño independiente. Hemos enviado un correo con los detalles de tu compra y tu número de seguimiento.</p>
-            <a th:href="@{/}" class="btn-primary" style="display: inline-flex; text-decoration: none;">Seguir Explorando</a>
+            <div>
+                <div class="success-icon">✓</div>
+                <h1 class="success-title">Orden <br><em>Confirmada</em></h1>
+                <p class="success-desc">Gracias por apoyar el diseño independiente. Tu compra quedo registrada y preparamos los detalles para que el creador pueda darle seguimiento.</p>
+                <a th:href="@{/}" class="btn-primary" style="display: inline-flex; text-decoration: none;">Seguir Explorando</a>
+            </div>
+            <div class="success-next">
+                <span class="success-kicker">Siguientes pasos</span>
+                <div class="success-steps">
+                    <div class="success-step">
+                        <strong>1</strong>
+                        <span>Recibiras la confirmacion de tu pedido con el resumen de las piezas compradas.</span>
+                    </div>
+                    <div class="success-step">
+                        <strong>2</strong>
+                        <span>El creador preparara tu paquete y actualizara el seguimiento cuando este listo.</span>
+                    </div>
+                    <div class="success-step">
+                        <strong>3</strong>
+                        <span>Conserva esta pantalla como referencia mientras seguimos afinando el historial de compras.</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
