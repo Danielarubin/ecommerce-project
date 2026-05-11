@@ -320,14 +320,7 @@
         </div>
     </nav>
 
-    <!-- ══ SUBNAV ══ -->
-    <div class="subnav">
-        <a th:href="@{/colecciones}">Tendencias</a>
-        <a th:href="@{/colecciones}">Vintage</a>
-        <a th:href="@{/colecciones}">Streetwear</a>
-        <a th:href="@{/colecciones}" class="hot">Más vendidos ✦</a>
-        <a th:href="@{/colecciones}">Recomendaciones</a>
-    </div>
+
 
     <!-- ══ HERO ══ -->
     <div class="hero-wrapper">
@@ -408,14 +401,16 @@
                  th:data-price="${prod.price}"
                  th:data-image="${prod.image}"
                  th:data-status="${prod.status}"
+                 th:data-sizes="${prod.sizes != null and !prod.sizes.isEmpty() ? #strings.listJoin(prod.sizes, ',') : ''}"
                  th:onclick="|window.location.href='@{/product/{id}(id=${prod.id})}'|">
-                <div class="e-img">
-                    <span class="badge-new" th:if="${iterStat.index < 2}">Nuevo</span>
+                <div class="e-img" th:style="${prod.stock <= 0 or prod.status.name() == 'SOLD'} ? 'opacity: 0.6;' : ''">
+                    <span class="badge-new" th:if="${iterStat.index < 2 and prod.stock > 0 and prod.status.name() != 'SOLD'}">Nuevo</span>
+                    <span class="badge-new" th:if="${prod.stock <= 0 or prod.status.name() == 'SOLD'}" style="background:var(--text-muted); color:white;">Agotado</span>
                     <!-- Solo se muestran imagenes remotas guardadas en BD -->
                     <img th:if="${prod.image != null and (prod.image.startsWith('http') or prod.image.startsWith('/uploads/'))}"
                          th:src="${prod.image}" th:alt="${prod.name}">
                     <button class="btn-fav" aria-label="Agregar a favoritos">🤍</button>
-                    <button class="btn-add-cart">Añadir a bolsa</button>
+                    <button class="btn-add-cart" th:if="${prod.stock > 0 and prod.status.name() != 'SOLD'}">Añadir a bolsa</button>
                 </div>
                 <div class="e-info">
                     <div>

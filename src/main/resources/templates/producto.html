@@ -251,7 +251,7 @@
                 <p class="description" th:if="${producto.description != null and !producto.description.isBlank()}"
                    th:text="${producto.description}">Descripcion</p>
 
-                <div th:if="${producto.stock > 0}">
+                <div th:if="${producto.stock > 0 and producto.status.name() != 'SOLD'}">
                     <form th:action="@{/cart/add/{id}(id=${producto.id})}" method="post">
                         <div class="size-block" th:if="${producto.sizes != null and !producto.sizes.isEmpty()}">
                             <span class="section-label">Selecciona talla</span>
@@ -271,7 +271,7 @@
                     </form>
                 </div>
 
-                <div th:if="${producto.stock <= 0}" class="sold-box">
+                <div th:if="${producto.stock <= 0 or producto.status.name() == 'SOLD'}" class="sold-box">
                     Esta prenda ya no está disponible.
                 </div>
 

@@ -37,6 +37,83 @@ document.addEventListener('DOMContentLoaded', () => {
         return backdrop;
     }
 
+    // === MODAL DE TALLA ===
+    function ensureSizeModal() {
+        let modal = document.getElementById('sizeModal');
+        if (modal) return modal;
+        modal = document.createElement('div');
+        modal.id = 'sizeModal';
+        modal.className = 'app-confirm-backdrop';
+        modal.innerHTML = `
+            <div class="app-confirm-dialog" role="dialog" aria-modal="true" style="max-width:420px">
+                <div class="app-confirm-kicker">Selecciona tu talla</div>
+                <h2 class="app-confirm-title" id="sizeModalProductName" style="font-size:1.4rem;margin-bottom:0.5rem;"></h2>
+                <p style="font-size:0.82rem;color:var(--text-muted,#8B7355);margin-bottom:1.5rem;">
+                    Elige la talla antes de añadir a la bolsa.
+                </p>
+                <div id="sizeModalGrid" style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.75rem;"></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                    <button type="button" id="sizeModalCancel"
+                        style="padding:0.85rem;border:1px solid var(--border-color,rgba(42,33,24,0.1));border-radius:4px;background:transparent;cursor:pointer;font-size:0.82rem;">Cancelar</button>
+                    <button type="button" id="sizeModalConfirm" disabled
+                        style="padding:0.85rem;background:var(--text-dark,#1C1410);color:#FDFAF5;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;font-weight:500;">Añadir a bolsa</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        return modal;
+    }
+
+    function openSizeModal(sizes, productName) {
+        return new Promise(resolve => {
+            const modal = ensureSizeModal();
+            document.getElementById('sizeModalProductName').textContent = productName || 'Prenda';
+            const grid = document.getElementById('sizeModalGrid');
+            const confirmBtn = document.getElementById('sizeModalConfirm');
+            const cancelBtn = document.getElementById('sizeModalCancel');
+            grid.innerHTML = '';
+            confirmBtn.disabled = true;
+            let selected = null;
+
+            sizes.forEach(size => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = size;
+                btn.style.cssText = 'min-width:52px;padding:0.45rem 0.85rem;border:1px solid var(--border-color,rgba(42,33,24,0.1));border-radius:999px;background:#FFFDF9;cursor:pointer;font-size:0.85rem;font-weight:700;transition:all 0.2s;';
+                btn.addEventListener('click', () => {
+                    grid.querySelectorAll('button').forEach(b => {
+                        b.style.background = '#FFFDF9';
+                        b.style.borderColor = 'var(--border-color,rgba(42,33,24,0.1))';
+                        b.style.color = 'inherit';
+                    });
+                    btn.style.background = 'var(--text-dark,#1C1410)';
+                    btn.style.borderColor = 'var(--text-dark,#1C1410)';
+                    btn.style.color = '#FDFAF5';
+                    selected = size;
+                    confirmBtn.disabled = false;
+                });
+                grid.appendChild(btn);
+            });
+
+            const close = value => {
+                modal.classList.remove('active');
+                cancelBtn.removeEventListener('click', onCancel);
+                confirmBtn.removeEventListener('click', onConfirm);
+                modal.removeEventListener('click', onBackdrop);
+                resolve(value);
+            };
+            const onCancel = () => close(null);
+            const onConfirm = () => close(selected);
+            const onBackdrop = e => { if (e.target === modal) close(null); };
+
+            cancelBtn.addEventListener('click', onCancel);
+            confirmBtn.addEventListener('click', onConfirm);
+            modal.addEventListener('click', onBackdrop);
+
+            modal.classList.add('active');
+        });
+    }
+
     function openConfirm({ title, message, confirmText, danger }) {
         return new Promise(resolve => {
             const backdrop = ensureConfirmDialog();
@@ -193,32 +270,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
         newBtnAdd.addEventListener('click', async (e) => {
             e.preventDefault();
-            e.stopPropagation(); 
-            
+            e.stopPropagation();
+
             const cardId = card.dataset.id;
             const status = card.dataset.status || 'AVAILABLE';
-            // No permitir añadir al carrito sin ID real del backend
             if (!cardId || cardId === '0') {
                 console.warn('Producto sin ID válido, no se puede añadir al carrito');
                 return;
             }
             if (status !== 'AVAILABLE') {
-                if (window.showToast) window.showToast('Esta pieza no esta disponible para compra', '');
+                if (window.showToast) window.showToast('Esta pieza no está disponible para compra', '');
                 return;
             }
-            
+
+            // --- Selección de talla ---
+            const sizesRaw = card.dataset.sizes || '';
+            const sizes = sizesRaw ? sizesRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+            let selectedSize = null;
+
+            if (sizes.length > 0) {
+                selectedSize = await openSizeModal(sizes, card.dataset.name);
+                if (selectedSize === null) return; // usuario canceló
+            }
+
             const product = {
                 id: cardId,
                 name: card.dataset.name,
                 brand: card.dataset.brand,
                 price: parseFloat(card.dataset.price.replace(/[$,]/g, '')),
                 image: card.dataset.image,
+                selectedSize: selectedSize,
                 qty: 1
             };
-            
+
             toggleDrawer(cartDrawer, true);
             await addToCart(product);
-            if (window.showToast) window.showToast('Añadido a tu bolsa 🛍', '');
+            if (window.showToast) window.showToast(`Añadido a tu bolsa 🛑${selectedSize ? ' · ' + selectedSize : ''}`, '');
         });
     });
 

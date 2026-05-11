@@ -23,7 +23,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/error", "/login", "/register", "/css/**", "/images/**", "/js/**",
                         "/uploads/**", "/actuator/**", "/colecciones", "/creadores", "/tiendas", "/tienda/**",
-                        "/favoritos", "/product/**", "/api/**").permitAll()
+                        "/favoritos", "/product/**", "/api/**", "/checkout", "/success").permitAll()
                 .requestMatchers("/admin/**").access((authenticationSupplier, context) -> {
                     Authentication authentication = authenticationSupplier.get();
                     boolean isAdmin = authentication != null
@@ -38,7 +38,14 @@ public class SecurityConfig {
             .formLogin(form -> form
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/dashboard", true)
+                .successHandler((request, response, authentication) -> {
+                    String redirectUri = request.getParameter("redirect_uri");
+                    if (redirectUri != null && !redirectUri.isBlank()) {
+                        response.sendRedirect(redirectUri);
+                    } else {
+                        response.sendRedirect("/dashboard");
+                    }
+                })
                 .usernameParameter("email")
                 .permitAll()
             )

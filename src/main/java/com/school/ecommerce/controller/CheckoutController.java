@@ -44,7 +44,10 @@ public class CheckoutController {
     @PostMapping("/checkout")
     public String processCheckout(HttpSession session, RedirectAttributes redirectAttributes, Principal principal) {
         if (principal == null) {
-            return "redirect:/login"; // Must be logged in to checkout
+            // Guarda el carrito en sesión y redirige al login con indicación de retorno
+            redirectAttributes.addFlashAttribute("loginRequired",
+                    "Necesitas iniciar sesión para completar tu compra. Tu bolsa se ha guardado.");
+            return "redirect:/login?from=checkout";
         }
         String username = principal.getName();
 
@@ -55,11 +58,9 @@ public class CheckoutController {
 
         try {
             checkoutService.processCheckout(cart, username);
-            // Si tiene éxito, vaciamos el carrito y redirigimos al éxito
             session.removeAttribute("cart");
             return "redirect:/success";
         } catch (Exception e) {
-            // Si hay error (ej. falta de stock), pasamos el mensaje de error y redirigimos
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/checkout";
         }
