@@ -24,7 +24,7 @@ body { background: #F5F0E7; }
 
 .product-detail {
     display: grid;
-    grid-template-columns: minmax(320px, 1fr) minmax(320px, 0.95fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr);
     gap: 1.5rem;
     align-items: start;
 }
@@ -239,7 +239,7 @@ body { background: #F5F0E7; }
 
 @media (max-width: 520px) {
     .detail-shell {
-        padding: 3rem 1rem 3rem;
+        padding: 2rem 1rem 3rem;
     }
 
     .info-panel {
@@ -248,9 +248,26 @@ body { background: #F5F0E7; }
 
     .purchase-row {
         grid-template-columns: 1fr;
+        gap: 0.75rem;
     }
 
     .product-title {
-        font-size: 2rem;
+        font-size: 1.9rem;
+    }
+
+    .btn-cart {
+        min-height: 56px;
+        font-size: 0.9rem;
+    }
+
+    .quantity-input {
+        min-height: 56px;
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    .size-option span {
+        min-width: 52px;
+        min-height: 44px;
     }
 }

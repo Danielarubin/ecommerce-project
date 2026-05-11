@@ -152,11 +152,35 @@
 }
 
 @media (max-width: 640px) {
+    .login-wrapper {
+        padding: 3rem 1rem 2rem;
+        align-items: flex-start;
+    }
+
     .login-card {
         padding: 1.5rem;
     }
 
     .form-row {
         grid-template-columns: 1fr;
+    }
+
+    .form-group input {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .login-title {
+        font-size: 2rem;
+    }
+
+    .login-card {
+        padding: 1.25rem;
+    }
+
+    .btn-submit {
+        min-height: 52px;
     }
 }

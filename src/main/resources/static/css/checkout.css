@@ -224,6 +224,13 @@
 }
 
 /* ══ RESPONSIVE ═══════════════════════════════════ */
+@media (max-width: 900px) {
+    .checkout-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
 @media (max-width: 768px) {
     .checkout-wrapper {
         padding: 2rem 1rem;
@@ -246,5 +253,23 @@
     .summary-card {
         position: static;
         padding: 1.5rem;
+    }
+
+    .checkout-nav {
+        padding: 0 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .checkout-title {
+        font-size: 1.8rem;
+    }
+
+    .checkout-wrapper {
+        padding: 1.5rem 1rem;
+    }
+
+    .payment-mock {
+        padding: 1rem;
     }
 }

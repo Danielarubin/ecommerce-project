@@ -222,7 +222,7 @@ body { background: #F5F0E7; }
     padding: 1.25rem;
     margin-bottom: 2rem;
     display: grid;
-    grid-template-columns: minmax(280px, 0.8fr) minmax(320px, 1.2fr);
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
     gap: 1.25rem;
     align-items: start;
 }
@@ -425,7 +425,7 @@ body { background: #F5F0E7; }
     }
 
     .hub-stats {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .hub-actions a {
@@ -440,5 +440,19 @@ body { background: #F5F0E7; }
     .hub-product-grid {
         grid-template-columns: 1fr 1fr;
         gap: 0.75rem;
+    }
+
+    .hub-section-title {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .hub-product-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hub-stats {
+        grid-template-columns: 1fr;
     }
 }

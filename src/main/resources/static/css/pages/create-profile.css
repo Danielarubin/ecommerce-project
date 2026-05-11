@@ -202,6 +202,11 @@ body { background: var(--bg-secondary); }
 
 /* ══ RESPONSIVE ═══════════════════════════════════ */
 @media (max-width: 768px) {
+    .onboarding-wrapper {
+        padding: 2rem 1rem;
+        align-items: flex-start;
+    }
+
     .onboarding-layout {
         grid-template-columns: 1fr;
         gap: 2rem;
@@ -217,5 +222,23 @@ body { background: var(--bg-secondary); }
 
     .onboarding-card {
         padding: 1.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .onboarding-wrapper {
+        padding: 1.5rem 1rem;
+    }
+
+    .onboarding-card {
+        padding: 1.25rem;
+    }
+
+    .onboarding-title {
+        font-size: 1.8rem;
+    }
+
+    .btn-submit {
+        min-height: 52px;
     }
 }

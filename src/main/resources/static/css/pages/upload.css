@@ -17,7 +17,7 @@ body { background: #F5F0E7; }
     max-width: 1180px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: minmax(320px, 0.9fr) minmax(360px, 1.1fr);
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
     gap: 1.5rem;
     align-items: start;
 }
@@ -291,7 +291,7 @@ textarea.form-control {
 
 @media (max-width: 560px) {
     .upload-wrapper {
-        padding: 5rem 1rem 3rem;
+        padding: 4rem 1rem 3rem;
     }
 
     .upload-heading,
@@ -301,5 +301,15 @@ textarea.form-control {
 
     .form-grid {
         grid-template-columns: 1fr;
+    }
+
+    .btn-submit {
+        min-height: 52px;
+    }
+}
+
+@media (max-width: 360px) {
+    .upload-wrapper {
+        padding: 3.5rem 0.75rem 2.5rem;
     }
 }
