@@ -24,7 +24,7 @@ body { background: #F5F0E7; }
     max-width: 1440px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.45fr);
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.45fr);
     gap: clamp(2rem, 5vw, 5rem);
     align-items: end;
 }

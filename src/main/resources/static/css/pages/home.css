@@ -373,7 +373,9 @@ body { background: #F5F0E7; }
     color: var(--text-dark);
 }
 
-/* ══ RESPONSIVE ═══════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
     .hero-wrapper {
         padding: 2rem 1rem 3rem;
@@ -386,7 +388,7 @@ body { background: #F5F0E7; }
     .hero-desc,
     .hero-actions,
     .hero-stats {
-        margin-left: 0;
+        margin-left: 0 !important;
     }
 
     .cta-banner {
@@ -402,6 +404,9 @@ body { background: #F5F0E7; }
     .hero-stats {
         flex-wrap: wrap;
         gap: 1.5rem;
+        margin-left: 0;
+        padding-top: 1.5rem;
+        margin-top: 1.5rem;
     }
 
     .featured,
@@ -414,6 +419,14 @@ body { background: #F5F0E7; }
         grid-template-columns: repeat(2, 1fr);
         gap: 0.75rem;
     }
+
+    .creator-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section-divider {
+        padding: 0 1rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -423,10 +436,28 @@ body { background: #F5F0E7; }
     }
 
     .hero-title {
-        font-size: 2.8rem;
+        font-size: 2.4rem;
     }
 
     .cta-banner-title {
         font-size: 1.7rem;
+    }
+
+    .cta-banner::before {
+        font-size: 7rem;
+    }
+
+    .stat-num {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-title {
+        font-size: 2rem;
     }
 }

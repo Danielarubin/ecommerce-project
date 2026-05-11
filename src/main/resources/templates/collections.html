@@ -13,11 +13,18 @@
 <body>
     <!-- NAVBAR -->
     <nav class="nav">
-        <div class="nav-links">
+        <div class="nav-left-area">
+            <div class="nav-links">
             <a th:href="@{/colecciones}" class="active">Colecciones</a>
             <a th:href="@{/creadores}">Creadores</a>
             <a th:href="@{/tiendas}">Tiendas</a>
             <a th:href="@{/}+'#sobre-nosotros'">Sobre nosotros</a>
+        </div>
+            <button class="nav-hamburger" id="navHamburger" aria-label="Abrir men&#250;" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
         <a class="nav-logo" th:href="@{/}">Baz<span>ar</span>cito</a>
         <div class="nav-right">
@@ -39,6 +46,54 @@
             </div>
         </div>
     </nav>
+
+    <!-- ══ MOBILE NAV MENU ══ -->
+    <div class="mobile-nav-menu" id="mobileNavMenu" aria-hidden="true">
+        <div class="mobile-nav-links">
+            <a href="/colecciones">Colecciones</a>
+            <a href="/creadores">Creadores</a>
+            <a href="/tiendas">Tiendas</a>
+            <a href="/#sobre-nosotros">Sobre nosotros</a>
+        </div>
+        <div class="mobile-nav-secondary">
+            <a href="/vender">Vender</a>
+            <a href="/favoritos">&#129293; Favoritos</a>
+            <a href="/login">Acceder</a>
+        </div>
+    </div>
+    <script>
+        // Hamburger Menu (inline for all pages)
+        (function() {
+            var hamburger = document.getElementById('navHamburger');
+            var mobileMenu = document.getElementById('mobileNavMenu');
+            if (!hamburger || !mobileMenu) return;
+            function closeMobileMenu() {
+                hamburger.classList.remove('open');
+                mobileMenu.classList.remove('open');
+                hamburger.setAttribute('aria-expanded', 'false');
+                mobileMenu.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            }
+            hamburger.addEventListener('click', function() {
+                var isOpen = mobileMenu.classList.contains('open');
+                if (isOpen) {
+                    closeMobileMenu();
+                } else {
+                    hamburger.classList.add('open');
+                    mobileMenu.classList.add('open');
+                    hamburger.setAttribute('aria-expanded', 'true');
+                    mobileMenu.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+            mobileMenu.querySelectorAll('a').forEach(function(link) {
+                link.addEventListener('click', function() { closeMobileMenu(); });
+            });
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeMobileMenu();
+            });
+        })();
+    </script>
 
     <div class="collection-header">
         <div class="collection-inner">

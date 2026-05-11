@@ -17,11 +17,18 @@
 
     <!-- ══ NAVBAR ══ -->
     <nav class="nav">
-        <div class="nav-links">
-            <a th:href="@{/colecciones}">Colecciones</a>
-            <a th:href="@{/creadores}">Creadores</a>
-            <a th:href="@{/tiendas}">Tiendas</a>
-            <a href="#sobre-nosotros" class="nav-about-link" onclick="scrollToAbout(event)">Sobre nosotros</a>
+        <div class="nav-left-area">
+            <div class="nav-links">
+                <a th:href="@{/colecciones}">Colecciones</a>
+                <a th:href="@{/creadores}">Creadores</a>
+                <a th:href="@{/tiendas}">Tiendas</a>
+                <a href="#sobre-nosotros" class="nav-about-link" onclick="scrollToAbout(event)">Sobre nosotros</a>
+            </div>
+            <button class="nav-hamburger" id="navHamburger" aria-label="Abrir men&#250;" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
         <a class="nav-logo" th:href="@{/}">Baz<span>ar</span>cito</a>
         <div class="nav-right">
@@ -45,6 +52,23 @@
             </div>
         </div>
     </nav>
+
+    <!-- ══ MOBILE NAV MENU ══ -->
+    <div class="mobile-nav-menu" id="mobileNavMenu" aria-hidden="true">
+        <div class="mobile-nav-links">
+            <a th:href="@{/colecciones}">Colecciones</a>
+            <a th:href="@{/creadores}">Creadores</a>
+            <a th:href="@{/tiendas}">Tiendas</a>
+            <a href="#sobre-nosotros" onclick="closeMobileMenu(); scrollToAbout(event);">Sobre nosotros</a>
+        </div>
+        <div class="mobile-nav-secondary">
+            <a th:href="@{/vender}">Vender</a>
+            <span id="btnSearchMobile" role="button">Buscar</span>
+            <a th:href="@{/favoritos}">🤍 Favoritos</a>
+            <a sec:authorize="isAnonymous()" th:href="@{/login}">Acceder</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/dashboard}">Mi Cuenta</a>
+        </div>
+    </div>
 
 
 
@@ -405,11 +429,54 @@
     <script>
         function scrollToAbout(e) {
             e.preventDefault();
+            closeMobileMenu();
             const target = document.getElementById('sobre-nosotros');
             if (target) {
                 target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
+
+        // Hamburger Menu
+        const navHamburger = document.getElementById('navHamburger');
+        const mobileNavMenu = document.getElementById('mobileNavMenu');
+
+        function closeMobileMenu() {
+            navHamburger.classList.remove('open');
+            mobileNavMenu.classList.remove('open');
+            navHamburger.setAttribute('aria-expanded', 'false');
+            mobileNavMenu.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        navHamburger?.addEventListener('click', () => {
+            const isOpen = mobileNavMenu.classList.contains('open');
+            if (isOpen) {
+                closeMobileMenu();
+            } else {
+                navHamburger.classList.add('open');
+                mobileNavMenu.classList.add('open');
+                navHamburger.setAttribute('aria-expanded', 'true');
+                mobileNavMenu.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            }
+        });
+
+        // Close on link click inside mobile menu
+        mobileNavMenu?.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => closeMobileMenu());
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeMobileMenu();
+        });
+
+        // Mobile search button
+        document.getElementById('btnSearchMobile')?.addEventListener('click', () => {
+            closeMobileMenu();
+            document.getElementById('searchOverlay')?.classList.add('active');
+            document.getElementById('searchInput')?.focus();
+        });
     </script>
     <script>
         // Toast helper global

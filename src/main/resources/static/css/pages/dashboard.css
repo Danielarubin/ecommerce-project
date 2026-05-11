@@ -10,6 +10,7 @@ body { background: #F5F0E7; }
     max-width: 1180px;
     margin: 0 auto;
     padding: 6.5rem 2rem 5rem;
+    min-height: calc(100vh - 70px);
 }
 
 /* ── DASHBOARD HEADER ─────────────────────────── */
@@ -238,11 +239,15 @@ body { background: #F5F0E7; }
     }
 
     .dh-greeting { font-size: 1.8rem; }
+
+    .quick-actions a {
+        text-align: center;
+    }
 }
 
 @media (max-width: 480px) {
     .dashboard-container {
-        padding: 5rem 1rem 3rem;
+        padding: 4rem 1rem 3rem;
     }
 
     .dashboard-header {
@@ -254,5 +259,17 @@ body { background: #F5F0E7; }
         width: 52px;
         height: 52px;
         font-size: 1.4rem;
+    }
+
+    .dh-greeting {
+        font-size: 1.5rem;
+    }
+
+    .dh-actions {
+        gap: 0.5rem;
+    }
+
+    .dh-actions a, .dh-actions button {
+        font-size: 0.62rem;
     }
 }
