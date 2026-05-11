@@ -26,6 +26,16 @@ public class Product {
     @Column(length = 255)
     private String image;
 
+    // These columns already exist in the production DB schema
+    @Column(length = 100)
+    private String status;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    @Column(name = "collection_id")
+    private Long collectionId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     private User seller;
@@ -45,6 +55,12 @@ public class Product {
     public void setStock(Integer stock) { this.stock = stock; }
     public String getImage() { return image; }
     public void setImage(String image) { this.image = image; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    public Long getCollectionId() { return collectionId; }
+    public void setCollectionId(Long collectionId) { this.collectionId = collectionId; }
     public User getSeller() { return seller; }
     public void setSeller(User seller) { this.seller = seller; }
 }
